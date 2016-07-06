@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-find_package(OpenCV 3.1.0 REQUIRED)
+find_package(OpenCV 2.4.8 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -128,7 +128,7 @@ include_directories(
 # add_dependencies(alpha_localization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(test_aruco src/test_aruco.cpp)
+#add_executable(test_aruco src/test_aruco.cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -136,7 +136,15 @@ add_executable(test_aruco src/test_aruco.cpp)
 # add_dependencies(alpha_localization_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(test_aruco
+#target_link_libraries(test_aruco
+#  ${catkin_LIBRARIES}
+#  ${OpenCV_LIBRARIES}
+  
+#)
+
+add_executable(test_hsv src/test_hsv.cpp)
+
+target_link_libraries(test_hsv
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
   
