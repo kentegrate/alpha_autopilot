@@ -9,3 +9,8 @@ This may not be a good solution because,
  - Because of the structure of the marker, it has to be big enough to be detected.
  - The computation is quite heavy for RaspberryPi Zero.
  - It relies on edges, so it is sensitive to motion blur.
+
+## Marker
+
+It is good to use markers only with the outer frame. 
+Takes about 3ms to process with a good PC.

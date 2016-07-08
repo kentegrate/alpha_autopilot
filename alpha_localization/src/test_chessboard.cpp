@@ -16,11 +16,12 @@ float calc_dist(Point2f &p1, Point2f &p2){
   return sqrt(pow(p1.x-p2.x,2)+pow(p1.y-p2.y,2));
 
 }
-void process(Mat &input, Mat &output){
+void process(Mat &input_high, Mat &output){
   double start = get_dtime();
   Size pattern_size(3,3);
 
-  Mat corners;
+  Mat corners,input;
+  resize(input_high, input, Size(), 0.5, 0.5);
   input.copyTo(output);
   if(!findChessboardCorners(input, pattern_size, corners, CV_CALIB_CB_ADAPTIVE_THRESH+  CV_CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK))
     return;
@@ -40,10 +41,10 @@ void process(Mat &input, Mat &output){
       
   int radius = std::ceil(min_dist*0.5);
   Size chess_size(radius,radius);      
-  cornerSubPix(gray,corners, chess_size, Size(-1, -1), TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 30, 0.1));
-
-  drawChessboardCorners(output,pattern_size,corners, true);
+  //  cornerSubPix(gray,corners, chess_size, Size(-1, -1), TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 30, 0.1));
   std::cout<<"computation time "<<get_dtime()-start<<std::endl;
+  drawChessboardCorners(output,pattern_size,corners, true);
+
 }
 
 

@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_localization)
+set(CMAKE_BUILD_TYPE Release)   # for PCL 1.7                                                                   
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
@@ -113,14 +116,13 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(alpha_localization
-#   src/${PROJECT_NAME}/alpha_localization.cpp
-# )
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -152,6 +154,15 @@ target_link_libraries(test_hsv
 add_executable(test_chessboard src/test_chessboard.cpp)
 
 target_link_libraries(test_chessboard
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  
+)
+
+
+add_executable(test_detection src/test_detection.cpp)
+
+target_link_libraries(test_detection
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
   
