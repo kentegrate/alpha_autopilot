@@ -149,6 +149,13 @@ target_link_libraries(test_hsv
   ${OpenCV_LIBRARIES}
   
 )
+add_executable(test_chessboard src/test_chessboard.cpp)
+
+target_link_libraries(test_chessboard
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  
+)
 
 #############
 ## Install ##
