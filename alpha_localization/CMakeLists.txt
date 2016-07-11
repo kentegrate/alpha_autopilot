@@ -168,6 +168,11 @@ target_link_libraries(test_detection
   
 )
 
+add_executable(ahrs src/ahrs.cpp)
+target_link_libraries(ahrs
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############
