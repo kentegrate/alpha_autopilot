@@ -173,6 +173,16 @@ target_link_libraries(ahrs
   ${catkin_LIBRARIES}
 )
 
+add_executable(ms5611 src/ms5611.cpp)
+target_link_libraries(ms5611
+  ${catkin_LIBRARIES}
+)
+
+add_executable(mpu9250 src/mpu9250.cpp)
+target_link_libraries(mpu9250
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

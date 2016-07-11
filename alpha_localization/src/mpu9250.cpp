@@ -7,9 +7,10 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MPU9250.cpp*/
 
 #include <alpha_localization/mpu9250.h>
 #include <bcm2835.h>
+#include <ros/ros.h>
 #define G_SI 9.80665
 #define PI  3.14159
-#define MPU9250_PIN BCM2835_SPI_CS0
+#define MPU9250_PIN BCM2835_SPI_CS1
 //-----------------------------------------------------------------------------------------------
 
 MPU9250::MPU9250()
@@ -27,7 +28,7 @@ MPU9250::MPU9250()
   bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
   bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536); // The default
-  bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
+  bcm2835_spi_setChipSelectPolarity(MPU9250_PIN, LOW);      // the default
     
 }
 
@@ -38,9 +39,12 @@ usage: use these methods to read and write MPU9250 registers over SPI
 
 unsigned int MPU9250::WriteReg( uint8_t WriteAddr, uint8_t WriteData )
 {
+  unsigned int recieved;
   bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
   bcm2835_spi_transfer(WriteAddr);
-  return bcm2835_spi_transfer(WriteData);
+  recieved =  bcm2835_spi_transfer(WriteData);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  return recieved;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -58,8 +62,10 @@ void MPU9250::ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes )
   bcm2835_spi_transfer(ReadAddr | READ_FLAG);
   for(int i = 0; i < Bytes; i++)
     ReadBuf[i] = bcm2835_spi_transfer(0x00);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
 
   usleep(50);
+
 }
 
 /*-----------------------------------------------------------------------------------------------
@@ -479,4 +485,29 @@ void MPU9250::getMotion6(float *ax, float *ay, float *az, float *gx, float *gy, 
   *gx = gyroscope_data[0];
   *gy = gyroscope_data[1];
   *gz = gyroscope_data[2];
+}
+void print_array(std::string &msg, float* array, size_t bytes){
+  std::cout<<msg<<" ";
+  for(int i = 0; i < bytes; i++)
+    std::cout<<array[i]<<",";
+  std::cout<<std::endl;
+}
+int main(int argc, char* argv[]){
+  ros::init(argc,argv,"test");
+  MPU9250 mpu9250;
+  mpu9250.initialize();
+  float accel[3];
+  float gyro[3];
+  float mag[3];
+  while(ros::ok()){
+    mpu9250.getMotion9(accel[0],accel[1],accel[2],
+		       gyro[0],gyro[1],gyro[2],
+		       mag[0],mag[1],mag[2]);
+
+    print_array("accel",accel,3);
+    print_array("gyro",gyro,3);
+    print_array("mag",mag,3);
+
+  }
+  return 0;
 }
