@@ -4,8 +4,16 @@
 
 Download Raspbian Jessie Lite from [here](https://www.raspberrypi.org/downloads/raspbian/), and install the image into a micro SD card (minimum 8GB required)
 
-### OpenCV 3.1.0 Build and Installation (About ?? hours)
+sudo apt-get update && sudo apt-get upgrade
 
-First, follow instructions on [this page](http://www.pyimagesearch.com/2015/12/14/installing-opencv-on-your-raspberry-pi-zero/) to Step #3. 
-Then, install git and grab the opencv and opencv_contrib repository.
-Go to the opencv respository and make a directory named 'build' and go in there, and type cmake -DOPENCV_EXTRA_MODULES=<opencv_contrib/modules path> ../
+### OpenCV 2.4.8 installation
+
+sudo apt-get install libopencv-dev
+
+### ROS Installation
+
+### Raspi-Cam Driver installation
+http://seesaawiki.jp/yattemiyo/d/Raspberry%20Pi3%A4%C7%A5%AB%A5%E1%A5%E9%A5%E2%A5%B8%A5%E5%A1%BC%A5%EB%A4%F2OpenCV%A4%C7%BB%C8%A4%A6
+
+sudo apt-get install libv4l-dev
+insert a new line "bcm2835-v4l2" at the end of /etc/modules
