@@ -5,9 +5,9 @@ Adapted for Raspberry Pi by Mikhail Avkhimenia (mikhail.avkhimenia@emlid.com)
 /*From Navio repository, adapted for bcm_2835 library by Ken Takaki
 https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MPU9250.cpp*/
 
-#include <alpha_localization/mpu9250.h>
+#include <alpha_drivers/mpu9250.h>
 #include <bcm2835.h>
-#include <ros/ros.h>
+//#include <ros/ros.h>
 #define G_SI 9.80665
 #define PI  3.14159
 #define MPU9250_PIN BCM2835_SPI_CS1
@@ -486,7 +486,7 @@ void MPU9250::getMotion6(float *ax, float *ay, float *az, float *gx, float *gy, 
   *gy = gyroscope_data[1];
   *gz = gyroscope_data[2];
 }
-void print_array(std::string &msg, float* array, size_t bytes){
+/*void print_array(std::string &msg, float* array, size_t bytes){
   std::cout<<msg<<" ";
   for(int i = 0; i < bytes; i++)
     std::cout<<array[i]<<",";
@@ -510,4 +510,4 @@ int main(int argc, char* argv[]){
 
   }
   return 0;
-}
+  }*/

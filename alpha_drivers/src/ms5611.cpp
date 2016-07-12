@@ -28,9 +28,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MS5611.cpp  */
 
 
-#include <alpha_localization/ms5611.h>
+#include <alpha_drivers/ms5611.h>
 #include <bcm2835.h>
-#include <ros/ros.h>
 #define MS5611_PIN BCM2835_SPI_CS0
 
 MS5611::MS5611() {
@@ -210,7 +209,7 @@ float MS5611::getTemperature() {
 float MS5611::getPressure() {
   return PRES;
 }
-int main(int argc, char* argv[]){
+/*int main(int argc, char* argv[]){
   ros::init(argc,argv,"test");
   MS5611 ms5611;
   ms5611.initialize();
@@ -219,4 +218,4 @@ int main(int argc, char* argv[]){
     std::cout<<"pressure "<<ms5611.getPressure()<<std::endl;
   }
   return 0;
-}
+  }*/
