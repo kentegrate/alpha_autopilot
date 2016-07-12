@@ -4,6 +4,7 @@
 
 #include <alpha_msgs/IMU.h>
 #include <geometry_msgs/Quaternion.h>
+#include <geometry_msgs/PoseStamped.h>
 bool have_new_data = false;
 float gx,gy,gz,ax,ay,az,mx,my,mz;
 
@@ -24,17 +25,24 @@ int main(int argc, char* argv[]){
   ros::NodeHandle n;
   ros::Subscriber imu_sub = n.subscribe("/imu",10,imu_cb);
   ros::Publisher orientation_pub = n.advertise<geometry_msgs::Quaternion>("/ahrs",10);
+  ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("/ahrs_imu",10);
   Ahrs ahrs(30);
   ros::Rate rate(30);
   while(ros::ok()){
     if(have_new_data){
       ahrs.MadgwickAHRSupdate(gx,gy,gz,ax,ay,az,mx,my,mz);
       geometry_msgs::Quaternion msg;
-      msg.x = (double)ahrs.q1;
-      msg.y = (double)ahrs.q2;
-      msg.z = (double)ahrs.q3;
-      msg.w = (double)ahrs.q0;
+      msg.x = (double)ahrs.q0;
+      msg.y = (double)ahrs.q1;
+      msg.z = (double)ahrs.q2;
+      msg.w = (double)ahrs.q3;
       orientation_pub.publish(msg);
+
+      geometry_msgs::PoseStamped pose_msg;//for rviz visualization
+      pose_msg.header.stamp = ros::Time::now();
+      pose_msg.header.frame_id = "/map";
+      pose_msg.pose.orientation = msg;
+      pose_pub.publish(pose_msg);
       have_new_data = false;
     }
     ros::spinOnce();
