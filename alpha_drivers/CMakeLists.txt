@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_drivers)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -lwiringPi")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
 )
-
+find_package(Boost 1.54.0 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -136,7 +136,6 @@ add_library(ms5611 src/ms5611.cpp)
 target_link_libraries(ms5611
   ${catkin_LIBRARIES}
   bcm2835
-  wiringPi
 )
 
 add_library(mpu9250 src/mpu9250.cpp)

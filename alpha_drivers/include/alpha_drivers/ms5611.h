@@ -62,13 +62,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MS5611_RA_D2_OSR_1024   0x54
 #define MS5611_RA_D2_OSR_2048   0x56
 #define MS5611_RA_D2_OSR_4096   0x58
-#define READ_FLAG   0x80
+
 class MS5611 {
  public:
   MS5611();
-  unsigned int WriteReg(uint8_t WriteAddr, uint8_t WriteData);
-  unsigned int ReadReg(uint8_t WriteAddr);
-  void ReadRegs(uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes);
+  char WriteReg(uint8_t WriteAddr, char WriteData);
+  char ReadReg(uint8_t WriteAddr);
+  void  ReadRegs(uint8_t ReadAddr, char *ReadBuf, unsigned int Bytes);
   void initialize();
   bool testConnection();
 
@@ -80,7 +80,6 @@ class MS5611 {
 
   void calculatePressureAndTemperature();
   void update();
-
   float getTemperature();
   float getPressure();
 

@@ -30,12 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <alpha_drivers/ms5611.h>
 #include <bcm2835.h>
-#include <wiringPiSPI.h>
 #include <iostream>
+#include <string.h>
 #define MS5611_PIN BCM2835_SPI_CS0
 
 MS5611::MS5611() {
-  /*  if (!bcm2835_init())
+  if (!bcm2835_init())
     {
       printf("bcm2835_init failed. Are you running as root??\n");
     }
@@ -46,37 +46,42 @@ MS5611::MS5611() {
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
   bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536); // The default
-  bcm2835_spi_setChipSelectPolarity(MS5611_PIN, LOW);      // the default*/
-  std::cout<<"status"<<wiringPiSPISetup(0,500000)<<std::endl;
+  bcm2835_spi_setChipSelectPolarity(MS5611_PIN, LOW);      // the default
+
   
 }
-unsigned int MS5611::WriteReg(uint8_t WriteAddr, uint8_t WriteData){
-  /* bcm2835_spi_chipSelect(MS5611_PIN);                      // The default
-  bcm2835_spi_transfer(WriteAddr);
-  return bcm2835_spi_transfer(WriteData);*/
-  wiringPiSPIDataRW(0,&WriteData,1);
+char MS5611::WriteReg(uint8_t WriteAddr, char WriteData){
+
+  char buff[2];
+  buff[0] = WriteAddr;
+  buff[1] = WriteData;
+  bcm2835_spi_chipSelect(MS5611_PIN);                      // The default
+  bcm2835_spi_transfern(buff,2);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  return buff[1];
+
 }
 
 //-----------------------------------------------------------------------------------------------
 
-unsigned int  MS5611::ReadReg( uint8_t WriteAddr)
+char MS5611::ReadReg( uint8_t WriteAddr)
 {
-  return WriteReg(WriteAddr , 0x00);
-}
+  return WriteReg(WriteAddr, 0x00);
+ }
 
 //-----------------------------------------------------------------------------------------------
 
-void MS5611::ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes )
+void MS5611::ReadRegs( uint8_t ReadAddr, char *ReadBuf, unsigned int Bytes )
 {
-  // bcm2835_spi_chipSelect(MS5611_PIN);                      // The default  
-  /*  bcm2835_spi_transfer(ReadAddr);
-    for(int i = 0; i < Bytes; i++)
-      ReadBuf[i] = bcm2835_spi_transfer(0x00);*/
-  wiringPiSPIDataRW(0,&ReadAddr,1);
-  for(int i = 0; i < Bytes; i++){
-    ReadBuf[i] = 0x00;
-    wiringPiSPIDataRW(0,&ReadBuf[i],1);
-  }
+  char buff[1+Bytes];
+  buff[0] = ReadAddr;
+  for(int i = 1; i < 1+Bytes; i++)
+    buff[i] = 0x00;
+  bcm2835_spi_chipSelect(MS5611_PIN);                      // The default
+  bcm2835_spi_transfern(buff,1+Bytes);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  memcpy(ReadBuf,buff+1,Bytes);
+
   usleep(50);
 
 }
@@ -85,7 +90,7 @@ void MS5611::ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes )
  */
 void MS5611::initialize() {
   // Reading 6 calibration data values
-  uint8_t buff[2];
+  char buff[2];
   ReadRegs(MS5611_RA_C1,buff,2);
   C1 = buff[0]<<8 | buff[1];
   ReadRegs(MS5611_RA_C2,buff,2);
@@ -106,7 +111,7 @@ void MS5611::initialize() {
  * @return True if connection is valid, false otherwise
  */
 bool MS5611::testConnection() {
-  uint8_t data;
+  char data;
   int8_t status = ReadReg(MS5611_RA_C0);
   if (status > 0)
     return true;
@@ -127,7 +132,7 @@ void MS5611::refreshPressure(uint8_t OSR) {
  */
 void MS5611::readPressure() {
   //
-  uint8_t buffer[3];
+  char buffer[3];
   ReadRegs(MS5611_RA_ADC, buffer, 3);
   D1 = (buffer[0] << 16) | (buffer[1] << 8) | buffer[2];
 }
@@ -144,7 +149,7 @@ void MS5611::readPressure() {
 /** Read temperature value
  */
 void MS5611::readTemperature() {
-  uint8_t buffer[3];
+  char buffer[3];
   ReadRegs(MS5611_RA_ADC, buffer, 3);
   D2 = (buffer[0] << 16) | (buffer[1] << 8) | buffer[2];
 }

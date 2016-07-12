@@ -16,9 +16,9 @@ class MPU9250 {
   bool initialize(int sample_rate_div = 1, int low_pass_filter = 0x01);
   bool testConnection();
 
-  unsigned int WriteReg( uint8_t WriteAddr, uint8_t WriteData );
-  unsigned int ReadReg( uint8_t WriteAddr);
-  void ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes );
+  char WriteReg( uint8_t WriteAddr, char WriteData );
+  char ReadReg( uint8_t WriteAddr);
+  void ReadRegs( uint8_t ReadAddr, char *ReadBuf, unsigned int Bytes );
 
   unsigned int set_gyro_scale(int scale);
   unsigned int set_acc_scale(int scale);

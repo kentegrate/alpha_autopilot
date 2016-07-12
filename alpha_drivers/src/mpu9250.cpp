@@ -7,8 +7,7 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MPU9250.cpp*/
 
 #include <alpha_drivers/mpu9250.h>
 #include <bcm2835.h>
-
-//#include <ros/ros.h>
+#include <string.h>
 #define G_SI 9.80665
 #define PI  3.14159
 #define MPU9250_PIN BCM2835_SPI_CS1
@@ -36,32 +35,41 @@ MPU9250::MPU9250()
 usage: use these methods to read and write MPU9250 registers over SPI
 -----------------------------------------------------------------------------------------------*/
 
-unsigned int MPU9250::WriteReg( uint8_t WriteAddr, uint8_t WriteData )
+char MPU9250::WriteReg( uint8_t WriteAddr,char WriteData )
 {
   unsigned int recieved;
-  //  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
-  bcm2835_spi_transfer(WriteAddr);
-  recieved =  bcm2835_spi_transfer(WriteData);
-  //  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
-  return recieved;
+
+  char buff[2];
+  buff[0] = WriteAddr;
+  buff[1] = WriteData;
+  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
+  bcm2835_spi_transfern(buff,2);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  return buff[1];
 }
 
 //-----------------------------------------------------------------------------------------------
 
-unsigned int  MPU9250::ReadReg( uint8_t WriteAddr)
+char MPU9250::ReadReg( uint8_t WriteAddr)
 {
   return WriteReg(WriteAddr | READ_FLAG, 0x00);
+  
 }
 
 //-----------------------------------------------------------------------------------------------
 
-void MPU9250::ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes )
+void MPU9250::ReadRegs( uint8_t ReadAddr, char *ReadBuf, unsigned int Bytes )
 {
-  //  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default  
-  bcm2835_spi_transfer(ReadAddr | READ_FLAG);
-  for(int i = 0; i < Bytes; i++)
-    ReadBuf[i] = bcm2835_spi_transfer(0x00);
-  //  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+
+  char buff[1+Bytes];
+  buff[0] = ReadAddr | READ_FLAG;
+  for(int i = 1; i < 1+Bytes; i++)
+    buff[i] = 0x00;
+  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
+  bcm2835_spi_transfern(buff,1+Bytes);
+  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  memcpy(ReadBuf,buff+1,Bytes);  
+
 
   bcm2835_delayMicroseconds(50);
 
@@ -105,7 +113,7 @@ returns 1 if an error occurred
 bool MPU9250::initialize(int sample_rate_div, int low_pass_filter)
 {
   uint8_t i = 0;
-  uint8_t MPU_Init_Data[MPU_InitRegNum][2] = {
+  char MPU_Init_Data[MPU_InitRegNum][2] = {
     //{0x80, MPUREG_PWR_MGMT_1},     // Reset Device - Disabled because it seems to corrupt initialisation of AK8963
     {0x01, MPUREG_PWR_MGMT_1},     // Clock Source
     {0x00, MPUREG_PWR_MGMT_2},     // Enable Acc & Gyro
@@ -269,7 +277,7 @@ usage: call this function to read accelerometer data. Axis represents selected a
 
 void MPU9250::read_acc()
 {
-  uint8_t response[6];
+  char response[6];
   int16_t bit_data;
   float data;
   int i;
@@ -292,7 +300,7 @@ usage: call this function to read gyroscope data. Axis represents selected axis:
 
 void MPU9250::read_gyro()
 {
-  uint8_t response[6];
+  char response[6];
   int16_t bit_data;
   float data;
   int i;
@@ -313,7 +321,7 @@ returns the value in °C
 
 void MPU9250::read_temp()
 {
-  uint8_t response[2];
+  char response[2];
   int16_t bit_data;
   float data;
   ReadRegs(MPUREG_TEMP_OUT_H,response,2);
@@ -334,7 +342,7 @@ returns Factory Trim value
 
 void MPU9250::calib_acc()
 {
-  uint8_t response[4];
+  char response[4];
   int temp_scale;
   //READ CURRENT ACC SCALE
   temp_scale=ReadReg(MPUREG_ACCEL_CONFIG);
@@ -353,7 +361,7 @@ void MPU9250::calib_acc()
 //-----------------------------------------------------------------------------------------------
 
 uint8_t MPU9250::AK8963_whoami(){
-  uint8_t response;
+  char response;
   WriteReg(MPUREG_I2C_SLV0_ADDR,AK8963_I2C_ADDR|READ_FLAG); //Set the I2C slave addres of AK8963 and set for read.
   WriteReg(MPUREG_I2C_SLV0_REG, AK8963_WIA); //I2C slave 0 register address from where to begin data transfer
   WriteReg(MPUREG_I2C_SLV0_CTRL, 0x81); //Read 1 byte from the magnetometer
@@ -370,7 +378,7 @@ uint8_t MPU9250::AK8963_whoami(){
 //-----------------------------------------------------------------------------------------------
 
 void MPU9250::calib_mag(){
-  uint8_t response[3];
+  char response[3];
   float data;
   int i;
 
@@ -393,7 +401,7 @@ void MPU9250::calib_mag(){
 //-----------------------------------------------------------------------------------------------
 
 void MPU9250::read_mag(){
-  uint8_t response[7];
+  char response[7];
   int16_t bit_data;
   float data;
   int i;
@@ -415,7 +423,7 @@ void MPU9250::read_mag(){
 //-----------------------------------------------------------------------------------------------
 
 void MPU9250::read_all(){
-  uint8_t response[21];
+  char response[21];
   int16_t bit_data;
   float data;
   int i;
