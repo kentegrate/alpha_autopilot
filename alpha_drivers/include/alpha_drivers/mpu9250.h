@@ -1,5 +1,5 @@
 /*
-Written by Qiyong Mu (kylongmu@msn.com)
+1;3409;0cWritten by Qiyong Mu (kylongmu@msn.com)
 Adapted for Raspberry Pi by Mikhail Avkhimenia (mikhail.avkhimenia@emlid.com)
 */
 /*From Navio repository, adapted for bcm_2835 library by Ken Takaki
@@ -7,8 +7,8 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MPU9250.cpp*/
 
 #ifndef _MPU9250_H
 #define _MPU9250_H
-
-
+#include <stdint.h>
+#include <stdio.h>
 class MPU9250 {
  public:
   MPU9250();

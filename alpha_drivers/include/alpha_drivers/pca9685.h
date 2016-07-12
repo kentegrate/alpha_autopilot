@@ -74,10 +74,10 @@ class PCA9685 {
   PCA9685(uint8_t address = PCA9685_DEFAULT_ADDRESS);
   ~PCA9685();
 
-  uint8_t writeByte(uint8_t regAddr, uint8_t *data);
-  uint8_t writeBytes(uint8_t regAddr, uint8_t *data, size_t bytes);
-  uint8_t readByte(uint8_t regAddr, uint8_t *data);
-  uint8_t writeBit(uint8_t regAddr, uint8_t bitNum, uint8_t data);
+  uint8_t writeByte(uint8_t regAddr, char *data);
+  uint8_t writeBytes(uint8_t regAddr, char *data, uint32_t bytes);
+  uint8_t readByte(uint8_t regAddr, char *data);
+  uint8_t writeBit(uint8_t regAddr, uint8_t bitNum, char data);
 
   void initialize();
   bool testConnection();
@@ -97,7 +97,7 @@ class PCA9685 {
   void setAllPWM(uint16_t length);
   void setAllPWMmS(float length_mS);
   void setAllPWMuS(float length_uS);
-p
+
  private:
   float frequency;
 };

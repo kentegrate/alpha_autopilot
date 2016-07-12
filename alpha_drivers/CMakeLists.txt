@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_drivers)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -lwiringPi")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -136,6 +136,7 @@ add_library(ms5611 src/ms5611.cpp)
 target_link_libraries(ms5611
   ${catkin_LIBRARIES}
   bcm2835
+  wiringPi
 )
 
 add_library(mpu9250 src/mpu9250.cpp)
@@ -149,6 +150,18 @@ add_library(pca9685 src/pca9685.cpp)
 target_link_libraries(pca9685
   ${catkin_LIBRARIES}
   bcm2835
+)
+
+add_executable(test_mpu9250 src/test_mpu9250.cpp)
+target_link_libraries(test_mpu9250
+  ${catkin_LIBRARIES}
+  mpu9250
+)
+
+add_executable(test_ms5611 src/test_ms5611.cpp)
+target_link_libraries(test_ms5611
+  ${catkin_LIBRARIES}
+  ms5611
 )
 
 ## Add cmake target dependencies of the executable

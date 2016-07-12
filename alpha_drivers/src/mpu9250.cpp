@@ -7,6 +7,7 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/MPU9250.cpp*/
 
 #include <alpha_drivers/mpu9250.h>
 #include <bcm2835.h>
+
 //#include <ros/ros.h>
 #define G_SI 9.80665
 #define PI  3.14159
@@ -18,18 +19,16 @@ MPU9250::MPU9250()
   if (!bcm2835_init())
     {
       printf("bcm2835_init failed. Are you running as root??\n");
-      return 1;
     }
   if (!bcm2835_spi_begin())
     {
       printf("bcm2835_spi_begin failedg. Are you running as root??\n");
-      return 1;
     }
   bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
-  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536); // The default
+  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16); // The default
   bcm2835_spi_setChipSelectPolarity(MPU9250_PIN, LOW);      // the default
-    
+  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default    
 }
 
 /*-----------------------------------------------------------------------------------------------
@@ -40,10 +39,10 @@ usage: use these methods to read and write MPU9250 registers over SPI
 unsigned int MPU9250::WriteReg( uint8_t WriteAddr, uint8_t WriteData )
 {
   unsigned int recieved;
-  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
+  //  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default
   bcm2835_spi_transfer(WriteAddr);
   recieved =  bcm2835_spi_transfer(WriteData);
-  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  //  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
   return recieved;
 }
 
@@ -58,13 +57,13 @@ unsigned int  MPU9250::ReadReg( uint8_t WriteAddr)
 
 void MPU9250::ReadRegs( uint8_t ReadAddr, uint8_t *ReadBuf, unsigned int Bytes )
 {
-  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default  
+  //  bcm2835_spi_chipSelect(MPU9250_PIN);                      // The default  
   bcm2835_spi_transfer(ReadAddr | READ_FLAG);
   for(int i = 0; i < Bytes; i++)
     ReadBuf[i] = bcm2835_spi_transfer(0x00);
-  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+  //  bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
 
-  usleep(50);
+  bcm2835_delayMicroseconds(50);
 
 }
 
@@ -138,7 +137,7 @@ bool MPU9250::initialize(int sample_rate_div, int low_pass_filter)
 
   for(i=0; i<MPU_InitRegNum; i++) {
     WriteReg(MPU_Init_Data[i][1], MPU_Init_Data[i][0]);
-    usleep(100000);  //I2C must slow down the write speed, otherwise it won't work
+    bcm2835_delayMicroseconds(100000);  //I2C must slow down the write speed, otherwise it won't work
   }
 
   set_acc_scale(BITS_FS_16G);
@@ -360,7 +359,7 @@ uint8_t MPU9250::AK8963_whoami(){
   WriteReg(MPUREG_I2C_SLV0_CTRL, 0x81); //Read 1 byte from the magnetometer
 
   //WriteReg(MPUREG_I2C_SLV0_CTRL, 0x81);    //Enable I2C and set bytes
-  usleep(10000);
+  bcm2835_delayMicroseconds(10000);
   response=ReadReg(MPUREG_EXT_SENS_DATA_00); //Read I2C
   //ReadRegs(MPUREG_EXT_SENS_DATA_00,response,1);
   //response=WriteReg(MPUREG_I2C_SLV0_DO, 0x00);    //Read I2C
@@ -380,7 +379,7 @@ void MPU9250::calib_mag(){
   WriteReg(MPUREG_I2C_SLV0_CTRL, 0x83); //Read 3 bytes from the magnetometer
 
   //WriteReg(MPUREG_I2C_SLV0_CTRL, 0x81);    //Enable I2C and set bytes
-  usleep(10000);
+  bcm2835_delayMicroseconds(10000);
   //response[0]=WriteReg(MPUREG_EXT_SENS_DATA_01|READ_FLAG, 0x00);    //Read I2C
   ReadRegs(MPUREG_EXT_SENS_DATA_00,response,3);
 
@@ -403,7 +402,7 @@ void MPU9250::read_mag(){
   WriteReg(MPUREG_I2C_SLV0_REG, AK8963_HXL); //I2C slave 0 register address from where to begin data transfer
   WriteReg(MPUREG_I2C_SLV0_CTRL, 0x87); //Read 6 bytes from the magnetometer
 
-  usleep(10000);
+  bcm2835_delayMicroseconds(10000);
   ReadRegs(MPUREG_EXT_SENS_DATA_00,response,7);
   //must start your read from AK8963A register 0x03 and read seven bytes so that upon read of ST2 register 0x09 the AK8963A will unlatch the data registers for the next measurement.
   for(i=0; i<3; i++) {
@@ -486,28 +485,3 @@ void MPU9250::getMotion6(float *ax, float *ay, float *az, float *gx, float *gy, 
   *gy = gyroscope_data[1];
   *gz = gyroscope_data[2];
 }
-/*void print_array(std::string &msg, float* array, size_t bytes){
-  std::cout<<msg<<" ";
-  for(int i = 0; i < bytes; i++)
-    std::cout<<array[i]<<",";
-  std::cout<<std::endl;
-}
-int main(int argc, char* argv[]){
-  ros::init(argc,argv,"test");
-  MPU9250 mpu9250;
-  mpu9250.initialize();
-  float accel[3];
-  float gyro[3];
-  float mag[3];
-  while(ros::ok()){
-    mpu9250.getMotion9(accel[0],accel[1],accel[2],
-		       gyro[0],gyro[1],gyro[2],
-		       mag[0],mag[1],mag[2]);
-
-    print_array("accel",accel,3);
-    print_array("gyro",gyro,3);
-    print_array("mag",mag,3);
-
-  }
-  return 0;
-  }*/

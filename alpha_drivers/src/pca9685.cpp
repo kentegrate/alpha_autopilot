@@ -31,7 +31,8 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/PCA9685.cpp
 
 #include <alpha_drivers/pca9685.h>
 #include <bcm2835.h>
-#include <ros/ros.h>
+#include <string.h>
+//#include <ros/ros.h>
 
 /** PCA9685 constructor.
  * @param address I2C address
@@ -42,37 +43,42 @@ PCA9685::PCA9685(uint8_t address) {
   if (!bcm2835_init())
     {
       printf("bcm2835_init failed. Are you running as root??\n");
-      return 1;
     }
       
   // I2C begin if specified    
-  if (init == I2C_BEGIN)
+
+  if (!bcm2835_i2c_begin())
     {
-      if (!bcm2835_i2c_begin())
-	{
-	  printf("bcm2835_i2c_begin failed. Are you running as root??\n");
-	  return 1;
-	}
+      printf("bcm2835_i2c_begin failed. Are you running as root??\n");
     }
 
   bcm2835_i2c_setSlaveAddress(address);
+  uint16_t clk_div = BCM2835_I2C_CLOCK_DIVIDER_148;
   bcm2835_i2c_setClockDivider(clk_div);
 }
 PCA9685::~PCA9685(){
   bcm2835_i2c_end();
   bcm2835_close();
 }
-uint8_t PCA9685::writeByte(uint8_t regAddr, uint8_t *data){
-  return bcm2835_i2c_write(data,1);
+uint8_t PCA9685::writeByte(uint8_t regAddr, char *data){
+  char send_data[2];
+  send_data[0] = regAddr;
+  send_data[1] = *data;
+  return bcm2835_i2c_write(&send_data[0],1);
 }
-uint8_t PCA9685::writeBytes(uint8_t regAddr, uint8_t *data, size_t bytes){
-  return bcm2835_i2c_write(data,bytes);
+uint8_t PCA9685::writeBytes(uint8_t regAddr, char *data, uint32_t bytes){
+  char send_data[1+bytes];
+  send_data[0]=regAddr;
+  memcpy(send_data+1,data,bytes);
+  return bcm2835_i2c_write(send_data,bytes);
 }
-uint8_t PCA9685::readByte(uint8_t regAddr, uint8_t *data){
+uint8_t PCA9685::readByte(uint8_t regAddr, char *data){
+  char read_data = 0x00;
+  writeByte(regAddr,&read_data);
   return bcm2835_i2c_read(data,1);
 }
-uint8_t PCA9685::writeBit(uint8_t regAddr, uint8_t bitNum, uint8_t data){
-  uint8_t b;
+uint8_t PCA9685::writeBit(uint8_t regAddr, uint8_t bitNum, char data){
+  char b;
   readByte(regAddr,&b);
   b = (data!=0) ? (b | (1<<bitNum)) : (b & ~(1 <<bitNum));
   return writeByte(regAddr, &b);
@@ -93,7 +99,7 @@ void PCA9685::initialize() {
  * @return True if connection is valid, false otherwise
  */
 bool PCA9685::testConnection() {
-  uint8_t data;
+  char data;
   int8_t status = readByte(PCA9685_RA_PRE_SCALE, &data);
   if (status == BCM2835_I2C_REASON_OK)
     return true;
@@ -113,11 +119,11 @@ void PCA9685::sleep() {
  * @see PCA9685_MODE1_RESTART_BIT
  */
 void PCA9685::restart() {
-  uint8_t data_1 = (1 << PCA9685_MODE1_SLEEP_BIT);
+  char data_1 = (1 << PCA9685_MODE1_SLEEP_BIT);
   writeByte(PCA9685_RA_MODE1, &data_1);
-  uint8_t data_2 = ((1 << PCA9685_MODE1_SLEEP_BIT) | (1 << PCA9685_MODE1_EXTCLK_BIT));
+  char data_2 = ((1 << PCA9685_MODE1_SLEEP_BIT) | (1 << PCA9685_MODE1_EXTCLK_BIT));
   writeByte(PCA9685_RA_MODE1, &data_2);
-  uint8_t data_3 = ((1 << PCA9685_MODE1_RESTART_BIT)| (1 << PCA9685_MODE1_EXTCLK_BIT)| (1 << PCA9685_MODE1_AI_BIT));
+  char data_3 = ((1 << PCA9685_MODE1_RESTART_BIT)| (1 << PCA9685_MODE1_EXTCLK_BIT)| (1 << PCA9685_MODE1_AI_BIT));
   writeByte(PCA9685_RA_MODE1, &data_3);
 }
 
@@ -126,7 +132,7 @@ void PCA9685::restart() {
  * @see PCA9685_RA_PRE_SCALE
  */
 float PCA9685::getFrequency() {
-  uint8_t data;
+  char data;
   readByte(PCA9685_RA_PRE_SCALE, &data);
   return 24576000.f / 4096.f / (data + 1);
 }
@@ -139,7 +145,7 @@ float PCA9685::getFrequency() {
 void PCA9685::setFrequency(float frequency) {
   sleep();
   usleep(10000);
-  uint8_t prescale = roundf(24576000.f / 4096.f / frequency)  - 1;
+  char prescale = roundf(24576000.f / 4096.f / frequency)  - 1;
   writeByte(PCA9685_RA_PRE_SCALE, &prescale);
   this->frequency = getFrequency();
   restart();
@@ -152,7 +158,7 @@ void PCA9685::setFrequency(float frequency) {
  * @see PCA9685_RA_LED0_ON_L
  */
 void PCA9685::setPWM(uint8_t channel, uint16_t offset, uint16_t length) {
-  uint8_t data[4] = {0, 0, 0, 0};
+  char data[4] = {0, 0, 0, 0};
   if(length == 0) {
     data[3] = 0x10;
   } else if(length >= 4096) {
@@ -199,7 +205,7 @@ void PCA9685::setPWMuS(uint8_t channel, float length_uS) {
  * @see PCA9685_RA_ALL_LED_ON_L
  */
 void PCA9685::setAllPWM(uint16_t offset, uint16_t length) {
-  uint8_t data[4] = {offset & 0xFF, offset >> 8, length & 0xFF, length >> 8};
+  char data[4] = {offset & 0xFF, offset >> 8, length & 0xFF, length >> 8};
   writeBytes(PCA9685_RA_ALL_LED_ON_L,data,4);
 }
 
