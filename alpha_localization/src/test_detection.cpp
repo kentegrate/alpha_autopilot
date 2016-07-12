@@ -25,7 +25,7 @@ void process(Mat &input, Mat &output){
   //  adaptiveThreshold(gray,thresh_img, 255, ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,9,10);
   //  imshow("image1",thresh_img);
   threshold(gray, thresh_img, 100, 255, THRESH_BINARY);
-  imshow("image2",thresh_img);
+  //  imshow("image2",thresh_img);
   //  std::vector<std::vector<Point2f> > contours;
   output = Mat::zeros(thresh_img.rows, thresh_img.cols, CV_8UC3);
   std::vector<std::vector<Point> > contours,filtered;
@@ -123,19 +123,19 @@ void process(Mat &input, Mat &output){
  //  std::cout<<rvec<<std::endl;
   std::cout<<tvec<<std::endl;
   }
-  //  std::cout<<"computation time "<<get_dtime()-start<<std::endl;
+  std::cout<<"computation time "<<get_dtime()-start<<std::endl;
 }
 
 
 int main(int argc, char *argv[]){
   ros::init(argc, argv, "chessboard_test");
   ros::NodeHandle nh;
-  namedWindow("detection_result");
+  /*  namedWindow("detection_result");
   startWindowThread();
   namedWindow("image1");
   namedWindow("image2");
   namedWindow("input");
-  startWindowThread();
+  startWindowThread();*/
 
   VideoCapture input;
   input.open(0);
@@ -143,8 +143,8 @@ int main(int argc, char *argv[]){
   while(input.grab() && ros::ok()){
     input.retrieve(image);
     process(image,result);
-    imshow("detection_result",result);
-    imshow("input",image);
+    //    imshow("detection_result",result);
+    //    imshow("input",image);
   }
   return 0;
 }
