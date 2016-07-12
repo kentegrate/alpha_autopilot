@@ -23,9 +23,9 @@ int main(int argc, char* argv[]){
 		       &mag[0],&mag[1],&mag[2]);
 
     //    std::cout<<mpu9250.AK8963_whoami()<<std::endl;
-      print_array("accel",accel,3);
-      /*    print_array("gyro",gyro,3);
-    print_array("mag",mag,3);*/
+    //    print_array("accel",accel,3);
+    print_array("gyro",gyro,3);
+    //    print_array("mag",mag,3);
     //    rate.sleep();
   }
   return 0;
