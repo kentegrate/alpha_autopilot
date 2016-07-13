@@ -174,12 +174,15 @@ add_library(ahrs src/ahrs.cpp)
 target_link_libraries(ahrs
   ${catkin_LIBRARIES}
 )
+
 add_executable(ahrs_node src/ahrs_node.cpp)
 target_link_libraries(ahrs_node
   ahrs
   ${catkin_LIBRARIES}
 )
 add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
+
+
 
 #############
 ## Install ##
