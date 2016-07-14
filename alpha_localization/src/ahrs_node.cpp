@@ -26,20 +26,17 @@ int main(int argc, char* argv[]){
   ros::Subscriber imu_sub = n.subscribe("/imu",10,imu_cb);
   ros::Publisher orientation_pub = n.advertise<geometry_msgs::Quaternion>("/ahrs",10);
   ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("/ahrs_imu",10);
-  Ahrs ahrs(512,0.01,0.00001);
-  ros::Rate rate(512);
+  Ahrs ahrs(100,0.5,0.001);
+  ros::Rate rate(100);
   int count = 0;
   float offset[3];
   for(int i = 0; i < 3; i++)
     offset[i] = 0;
-  while(count < 1000){
+  while(ros::ok() && count < 200){
     if(have_new_data){
-      gx *= 180/M_PI;
-      gy *= 180/M_PI;
-      gz *= 180/M_PI;
-      offset[0] += (-gx*0.0175);
-      offset[1] += (-gy*0.0175);
-      offset[2] += (-gz*0.0175);
+      offset[0] = -gx;
+      offset[1] = -gy;
+      offset[2] = -gz;
       count++;
       have_new_data=false;
     }
@@ -47,38 +44,18 @@ int main(int argc, char* argv[]){
     ros::spinOnce();
   }
   for(int i = 0; i< 3; i++)
-    offset[i]/=1000;
+    offset[i]/=200;
 
   while(ros::ok()){
     if(have_new_data){
       //           ahrs.MadgwickAHRSupdate(gx,gy,gz,ax,ay,az,mx,my,mz);
 
-      float costheta = -1;//around y axis theta=180deg
-      float sintheta = 0;
-      float cosphi = 0;//around z axis phi
-      float sinphi = -1;
-      float _mx = mx;
-      float _my = my;
-      float _mz = mz;
 
-      /*      mx = cosphi*(_mx*costheta+_mz*sintheta)-_my*sinphi;
-      my = sinphi*(_mx*costheta+_mz*sintheta)+_my*cosphi;
-      mz = -_mx*sintheta+_mz*costheta;*/
-      gx *= 180/M_PI;
-      gy *= 180/M_PI;
-      gz *= 180/M_PI;
-      gx *= 0.0175;
-      gy *= 0.0175;
-      gz *= 0.0175;
       gx += offset[0];
       gy += offset[1];
       gz += offset[2];
 
-      ax /= 9.80665;
-      ay /= 9.80665;
-      az /= 9.80665;
-
-      ahrs.MahonyAHRSupdate(gx,gy,gz,ax,ay,az,my,mx,-mz);
+      ahrs.MadgwickAHRSupdate(gx,gy,gz,ax,ay,az,my,mx,-mz);
       geometry_msgs::Quaternion msg;
       msg.x = (double)ahrs.q1;
       msg.y = (double)ahrs.q2;
