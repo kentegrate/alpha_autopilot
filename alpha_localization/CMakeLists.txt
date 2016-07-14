@@ -146,20 +146,19 @@ include_directories(
   
 #)
 
-add_executable(test_hsv src/test_hsv.cpp)
+#add_executable(test_hsv src/test_hsv.cpp)
 
-target_link_libraries(test_hsv
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-  
-)
-add_executable(test_chessboard src/test_chessboard.cpp)
+#target_link_libraries(test_hsv
+#  ${catkin_LIBRARIES}
+#  ${OpenCV_LIBRARIES}
+#)
+#add_executable(test_chessboard src/test_chessboard.cpp)
 
-target_link_libraries(test_chessboard
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
+#target_link_libraries(test_chessboard
+#  ${catkin_LIBRARIES}
+#  ${OpenCV_LIBRARIES}
   
-)
+#)
 
 
 add_executable(test_detection src/test_detection.cpp)
