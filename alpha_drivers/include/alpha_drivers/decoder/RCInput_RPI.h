@@ -20,7 +20,7 @@
 #include <sys/mman.h>
 #include <assert.h>
 #include <queue>
-#include "Scheduler.h"
+//#include "Scheduler.h"
 
 enum state_t{
   RCIN_RPI_INITIAL_STATE = -1,
@@ -84,14 +84,18 @@ class RCInput_RPI : public RCInput
   RCInput_RPI();
   ~RCInput_RPI();
 
-  void set_scheduler(Scheduler* _scheduler);
+  //  void set_scheduler(Scheduler* _scheduler);
   void set_gpio(GPIO_RPI* _gpio);
-  Scheduler* scheduler;
+  //  Scheduler* scheduler;
   GPIO_RPI* gpio;
-  
+
+  bool ok();
+  bool running;  
  private:
 
-  //Physical adresses of peripherals. Are different on different Raspberries.
+
+
+  //Physicaladresses of peripherals. Are different on different Raspberries.
   uint32_t dma_base;
   uint32_t clk_base;
   uint32_t pcm_base;
@@ -133,6 +137,7 @@ class RCInput_RPI : public RCInput
   static void termination_handler(int signum);
   void set_sigaction();
   void set_physical_addresses(int version);
+ public:
   void deinit();
 
 };

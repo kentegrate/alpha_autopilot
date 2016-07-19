@@ -12,6 +12,7 @@
 
 #include <alpha_drivers/decoder/RCInput.h>
 #include <alpha_drivers/decoder/common.h>
+#include <ros/ros.h>
 //#include "Storage.h"
 //#include "Util.h"
 
@@ -73,7 +74,7 @@ void Scheduler::init()
   sched_setscheduler(0, SCHED_FIFO, &param);
 
   /* set barrier to N + 1 threads: worker threads + main */
-  unsigned n_threads = ARRAY_SIZE(sched_table) + 1;
+  unsigned n_threads = ARRAY_SIZE(sched_table);// + 1;
   pthread_barrier_init(&_initialized_barrier, nullptr, n_threads);
 
   for (size_t i = 0; i < ARRAY_SIZE(sched_table); i++) {
@@ -191,7 +192,7 @@ bool Scheduler::SchedulerThread::_run()
 
     double next_run_usec = get_utime() + _period_usec;
 
-    while (true) {
+    while (ros::ok()) {
       double dt = next_run_usec - get_utime();
       if (dt > _period_usec) {
 	// we've lost sync - restart

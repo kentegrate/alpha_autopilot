@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-
+#include <iostream>
 #include <alpha_drivers/decoder/GPIO_RPI.h>
 #include <alpha_drivers/decoder/RCInput_RPI.h>
 
@@ -78,6 +78,33 @@
 volatile uint32_t *RCInput_RPI::pcm_reg;
 volatile uint32_t *RCInput_RPI::clk_reg;
 volatile uint32_t *RCInput_RPI::dma_reg;
+
+void microsleep(double usec)
+ {
+  struct timespec ts;
+  ts.tv_sec = 0;
+  ts.tv_nsec = usec*1000UL;
+  while (nanosleep(&ts, &ts) == -1 && errno == EINTR) ;
+}
+
+double get_mtime(){
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  //ミリ秒を計算
+  return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); 
+}
+
+void delay_microseconds(double us){
+  microsleep(us);
+}
+void delay(double ms){
+  double start = get_mtime();
+
+  while ((get_mtime() - start) < ms) {
+    microsleep(1000);
+  }
+
+}
 
 Memory_table::Memory_table()
 {
@@ -234,6 +261,8 @@ void RCInput_RPI::init_dma_cb(dma_cb_t** cbp, uint32_t mode, uint32_t source, ui
 
 void RCInput_RPI::stop_dma()
 {
+  std::cout<<"interuppted"<<std::endl;
+    
   dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = 0;
 }
 
@@ -241,6 +270,7 @@ void RCInput_RPI::stop_dma()
 void RCInput_RPI::termination_handler(int signum)
 {
   stop_dma();
+  //  running = false;
   //  AP_HAL::panic("Interrupted: %s", strsignal(signum));
 }
 
@@ -328,25 +358,25 @@ void RCInput_RPI::init_ctrl_data()
 void RCInput_RPI::init_PCM()
 {
   pcm_reg[RCIN_RPI_PCM_CS_A] = 1;                                          // Disable Rx+Tx, Enable PCM block
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   clk_reg[RCIN_RPI_PCMCLK_CNTL] = 0x5A000006;                              // Source=PLLD (500MHz)
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   clk_reg[RCIN_RPI_PCMCLK_DIV] = 0x5A000000 | ((50000/RCIN_RPI_SAMPLE_FREQ)<<12);   // Set pcm div. If we need to configure DMA frequency.
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   clk_reg[RCIN_RPI_PCMCLK_CNTL] = 0x5A000016;                              // Source=PLLD and enable
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_TXC_A] = 0<<31 | 1<<30 | 0<<20 | 0<<16;             // 1 channel, 8 bits
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_MODE_A] = (10 - 1) << 10;                           //PCM mode
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_CS_A] |= 1<<4 | 1<<3;                               // Clear FIFOs
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_DREQ_A] = 64<<24 | 64<<8;                           // DMA Req when one slot is free?
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_CS_A] |= 1<<9;                                      // Enable DMA
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   pcm_reg[RCIN_RPI_PCM_CS_A] |= 1<<2;                                      // Enable Tx
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
 }
 
 /*Initialise DMA
@@ -356,7 +386,7 @@ void RCInput_RPI::init_PCM()
 void RCInput_RPI::init_DMA()
 {
   dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = RCIN_RPI_DMA_RESET;                 //Reset DMA
-  scheduler->delay_microseconds(100);
+  delay_microseconds(100);
   dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = RCIN_RPI_DMA_INT | RCIN_RPI_DMA_END;
   dma_reg[RCIN_RPI_DMA_CONBLK_AD | RCIN_RPI_DMA_CHANNEL << 8] = reinterpret_cast<uintptr_t>(con_blocks->get_page(con_blocks->_phys_pages, 0));//Set first control block address
   dma_reg[RCIN_RPI_DMA_DEBUG | RCIN_RPI_DMA_CHANNEL << 8] = 7;                      // clear debug error flags
@@ -406,9 +436,13 @@ void RCInput_RPI::deinit()
 {
   stop_dma();
 }
-void RCInput_RPI::set_scheduler(Scheduler *_scheduler){
-  scheduler = _scheduler;
+bool RCInput_RPI::ok()
+{
+  return running;
 }
+/*void RCInput_RPI::set_scheduler(Scheduler *_scheduler){
+  scheduler = _scheduler;
+  }*/
 void RCInput_RPI::set_gpio(GPIO_RPI* _gpio){
   gpio = _gpio;
 }
@@ -431,13 +465,13 @@ void RCInput_RPI::init()
   //  enable_pin->mode(HAL_GPIO_INPUT);
 
   //Configuration
-  set_sigaction();
+  //  set_sigaction();
   init_ctrl_data();
   init_PCM();
   init_DMA();
 
   //wait a bit to let DMA fill queues and come to stable sampling
-  scheduler->delay(300);
+  delay(300);
 
   //Reading first sample
   curr_tick = *((uint64_t*) circle_buffer->get_page(circle_buffer->_virt_pages, curr_pointer));
@@ -446,6 +480,8 @@ void RCInput_RPI::init()
   curr_signal = *((uint8_t*) circle_buffer->get_page(circle_buffer->_virt_pages, curr_pointer)) & 0x10 ? 1 : 0;
   last_signal = curr_signal;
   curr_pointer++;
+
+  running = true;
 }
 
 

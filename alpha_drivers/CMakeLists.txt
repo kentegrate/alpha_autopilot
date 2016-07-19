@@ -141,9 +141,10 @@ target_link_libraries(pca9685
 #  ms5611
 #)
 add_executable (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
-                             src/decoder/Thread.cpp src/decoder/sbus.cpp
-			     src/decoder/RCInput.cpp src/decoder/Scheduler.cpp
+                             src/decoder/sbus.cpp
+			     src/decoder/RCInput.cpp
 			     src/decoder/main.cpp)
+			   # src/decoder/Scheduler.cpp src/decoder/Thread.cpp
 target_link_libraries(sbus_decoder
   ${catkin_LIBRARIES}
 )
