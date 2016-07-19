@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_drivers)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -std=c++11")
+#
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -108,6 +108,8 @@ include_directories(
 
 ## Declare a C++ executable
 # add_executable(alpha_drivers_node src/alpha_drivers_node.cpp)
+
+
 add_library(ms5611 src/ms5611.cpp)
 target_link_libraries(ms5611
   ${catkin_LIBRARIES}
@@ -138,6 +140,13 @@ target_link_libraries(pca9685
 #  ${catkin_LIBRARIES}
 #  ms5611
 #)
+add_executable (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
+                             src/decoder/Thread.cpp src/decoder/sbus.cpp
+			     src/decoder/RCInput.cpp src/decoder/Scheduler.cpp
+			     src/decoder/main.cpp)
+target_link_libraries(sbus_decoder
+  ${catkin_LIBRARIES}
+)
 add_executable(spi_sensors src/spi_sensors.cpp)
 target_link_libraries(spi_sensors
   ${catkin_LIBRARIES}
