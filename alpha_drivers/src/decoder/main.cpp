@@ -1,6 +1,6 @@
 #include <alpha_drivers/decoder/GPIO_RPI.h>
 #include <alpha_drivers/decoder/RCInput_RPI.h>
-//#include <alpha_drivers/decoder/Scheduler.h>
+#include <alpha_msgs/RC.h>
 #include <ros/ros.h>
 RCInput_RPI rcin;
 
@@ -16,13 +16,11 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"sbus_decoder",ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
 
-  //  Scheduler scheduler;
-  GPIO_RPI gpio;
+  ros::Publisher pub = n.advertise<alpha_msgs::RC>("/rc",10);
 
-  //  rcin.set_scheduler(&scheduler);
+  GPIO_RPI gpio;
   rcin.set_gpio(&gpio);
-  //  scheduler.setRCInput(&rcin);
-  //  scheduler.init();
+
   for(int i = 0; i < 64; i++){
     struct sigaction sa;
     memset(&sa,0,sizeof(sa));
@@ -36,8 +34,12 @@ int main(int argc, char* argv[]){
   while(rcin.ok()){
     rcin._timer_tick();
     if(rcin.new_input()){
-      //      print_ch(0);
-      //      print_ch(1);
+      alpha_msgs::RC msg;
+      msg.Frequency = 73.5f;
+      for(int i = 0; i < LINUX_RC_INPUT_NUM_CHANNELS; i++)
+	msg.Channel.push_back(rcin.read(i));
+      
+      pub.publish(msg);
     }
     rate.sleep();
   }

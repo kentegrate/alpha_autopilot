@@ -148,6 +148,8 @@ add_executable (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cp
 target_link_libraries(sbus_decoder
   ${catkin_LIBRARIES}
 )
+add_dependencies(sbus_decoder ${alpha_msgs_EXPORTED_TARGETS})
+
 add_executable(spi_sensors src/spi_sensors.cpp)
 target_link_libraries(spi_sensors
   ${catkin_LIBRARIES}
@@ -155,6 +157,13 @@ target_link_libraries(spi_sensors
   ms5611
   )
 add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
+
+add_executable(rcout_node src/RCOut_node.cpp)
+target_link_libraries(rcout_node
+  ${catkin_LIBRARIES}
+  pca9685
+  )
+add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
 
 
 ## Add cmake target dependencies of the executable
