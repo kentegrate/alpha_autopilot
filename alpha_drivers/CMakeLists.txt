@@ -129,6 +129,12 @@ target_link_libraries(pca9685
   bcm2835
 )
 
+
+add_library(PCA9685 src/PCA9685.cpp)
+target_link_libraries(PCA9685
+  ${catkin_LIBRARIES}
+)
+
 #add_executable(test_mpu9250 src/test_mpu9250.cpp)
 #target_link_libraries(test_mpu9250
 #  ${catkin_LIBRARIES}
@@ -161,7 +167,8 @@ add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
 add_executable(rcout_node src/RCOut_node.cpp)
 target_link_libraries(rcout_node
   ${catkin_LIBRARIES}
-  pca9685
+  PCA9685
+  wiringPi
   )
 add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
 

@@ -38,6 +38,7 @@ https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/PCA9685.cpp
  * @param address I2C address
  * @see PCA9685_DEFAULT_ADDRESS
  */
+#define PWM_ENABLE RPI_GPIO_P1_13
 PCA9685::PCA9685(uint8_t address) {
 
   if (!bcm2835_init())
@@ -53,8 +54,11 @@ PCA9685::PCA9685(uint8_t address) {
     }
 
   bcm2835_i2c_setSlaveAddress(address);
-  uint16_t clk_div = BCM2835_I2C_CLOCK_DIVIDER_148;
+  uint16_t clk_div = BCM2835_I2C_CLOCK_DIVIDER_626;
   bcm2835_i2c_setClockDivider(clk_div);
+
+  bcm2835_gpio_fsel(PWM_ENABLE, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_write(PWM_ENABLE,LOW);
 }
 PCA9685::~PCA9685(){
   bcm2835_i2c_end();
@@ -64,18 +68,27 @@ uint8_t PCA9685::writeByte(uint8_t regAddr, char *data){
   char send_data[2];
   send_data[0] = regAddr;
   send_data[1] = *data;
-  return bcm2835_i2c_write(&send_data[0],1);
+  //  uint8_t address = 0b11100000;
+  //  bcm2835_i2c_setSlaveAddress(address);
+  return bcm2835_i2c_write(&send_data[0],2);
 }
 uint8_t PCA9685::writeBytes(uint8_t regAddr, char *data, uint32_t bytes){
   char send_data[1+bytes];
   send_data[0]=regAddr;
   memcpy(send_data+1,data,bytes);
-  return bcm2835_i2c_write(send_data,bytes);
+  //  uint8_t address = 0b11100000;
+  //  bcm2835_i2c_setSlaveAddress(address);
+  
+  return bcm2835_i2c_write(send_data,bytes+1);
 }
 uint8_t PCA9685::readByte(uint8_t regAddr, char *data){
   char read_data = 0x00;
-  writeByte(regAddr,&read_data);
+  ///  writeByte(regAddr,&read_data);
+  char reg = regAddr;
+
+  bcm2835_i2c_write(&reg,1);
   return bcm2835_i2c_read(data,1);
+   
 }
 uint8_t PCA9685::writeBit(uint8_t regAddr, uint8_t bitNum, char data){
   char b;
