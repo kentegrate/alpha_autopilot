@@ -12,8 +12,12 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   alpha_msgs
+  image_transport
+  cv_bridge
 )
 find_package(Boost 1.54.0 REQUIRED)
+
+find_package(OpenCV 2.4.8 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -94,6 +98,7 @@ catkin_package(
 include_directories(
   include 
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -172,7 +177,13 @@ target_link_libraries(rcout_node
   )
 add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
 
+add_executable(camera_node src/raspi_camera.cpp)
+target_link_libraries(camera_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
 
+  
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 
