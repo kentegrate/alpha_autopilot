@@ -1,6 +1,10 @@
-#include <gazebo/MathTypes.hh>
+#ifndef ALPHA_SIMULATOR_PROPERTIES_H
+#define ALPHA_SIMULATOR_PROPERTIES_H
+
+#include <gazebo/math/gzmath.hh>
 
 typedef gazebo::math::Vector3 Vector3;
+typedef gazebo::math::Vector4 Vector4;
 typedef gazebo::math::Quaternion Quaternion;
 
 #define SQUARE(x) (x*x)
@@ -24,23 +28,21 @@ struct DimLessDerivatives{
   double L0,D0,m0;
 };
 struct DimensionalDerivatives{
-}
+};
 class Properties{
 
 };
 
 class PhysicalProperties : public Properties{
  public:
-  double Sref;//0.4739
-  double Uref;//14.34
-  double Cref;//0.271544
-  double Bref;//1.8
   double rho;//1.225 the density of air
 
   //wind
   Vector3 wind_ave;
   Vector3 wind_amp;
   Vector3 wind_f;
+
+  void load();
 };
 
 class RotorProperties : public Properties{
@@ -56,9 +58,9 @@ class RotorProperties : public Properties{
 };
 class AircraftProperties : public Properties{
  public:
-  const double mass;//4.0
+  double mass;//4.0
   //空力微係数  
-  const Inertia I;
+  Inertia I;
   double T_arm; //0.0
   //  Dimensionless derivatives
   DimLessDerivatives C;
@@ -70,6 +72,11 @@ class AircraftProperties : public Properties{
   StabilityDerivatives M;    
   StabilityDerivatives N;    
   RotorProperties rotor;
+  double Sref;//0.4739
+  double Uref;//14.34
+  double Cref;//0.271544
+  double Bref;//1.8
+
   void load();
   void computeDimensionalDerivatives(PhysicalProperties &pp);
 };
@@ -83,6 +90,7 @@ class PhysicalState{
   Vector3 P;//position
   Vector3 gyro;
   Quaternion q;
-  Quaternion dq;
+  Vector4 dq;
 };
 
+#endif //ALPHA_SIMULATOR_PROPERTIES_H
