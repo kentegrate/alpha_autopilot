@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro"
+>
+
+<xacro:macro name="base_macro">
+  <link name="base_link_alpha">
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://alpha_simulator/meshes/cessna.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://alpha_simulator/meshes/cessna.dae"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo>
+    <plugin name="aircraft_model_plugin" filename="libgazebo_aircraft_plugin.so"/>
+  </gazebo>
+</xacro:macro>
+</robot>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<robot name="alpha"
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+
+  <xacro:include filename="$(find alpha_simulator)/urdf/base.urdf.xacro"/>
+  <xacro:base_macro/>
+
+  <xacro:include filename="$(find alpha_simulator)/urdf/alpha_sensors.urdf.xacro"/>
+  <xacro:alpha_sensors/>
+
+  <xacro:include filename="$(find alpha_simulator)/urdf/generic_camera.urdf.xacro"/>
+  <xacro:generic_camera name="front" sim_name="alpha" parent="base_link_alpha" update_rate="15" res_x="640" res_y="480" image_format="R8G8B8" hfov="${81*M_PI/180}">
+    <origin xyz="0.00 -0 -1" rpy="0 0 0"/>
+  </xacro:generic_camera>
+</robot>
