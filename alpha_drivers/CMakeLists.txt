@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -std=c++11")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   sensor_msgs
   std_msgs
   message_generation
@@ -181,6 +182,13 @@ add_executable(camera_node src/raspi_camera.cpp)
 target_link_libraries(camera_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+)
+
+
+add_executable(indicator_node src/status_indicator.cpp)
+target_link_libraries(indicator_node
+  ${catkin_LIBRARIES}
+  wiringPi
 )
 
   
