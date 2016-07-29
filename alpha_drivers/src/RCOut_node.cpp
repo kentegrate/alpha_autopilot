@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"rcout_node");
   ros::NodeHandle n;
 
-  ros::Subscriber sub = n.subscribe("/rc",1,rc_cb);
+  ros::Subscriber sub = n.subscribe("/rc_out",1,rc_cb);
 
   if(wiringPiSetupGpio() == -1) return 1;
 
