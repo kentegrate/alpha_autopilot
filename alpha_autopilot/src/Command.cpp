@@ -105,7 +105,10 @@ std::vector<int> Command::executeCommand(AlphaState state,std::vector<int> &rc_r
     rc_out = rc_raw;
   }
   else if(state == AlphaState::SHUTDOWN){
-    reboot(LINUX_REBOOT_CMD_POWER_OFF);
+    rc_sub.shutdown();
+    sync();
+    reboot(LINUX_REBOOT_CMD_HALT);
+    
   }  
   else{
     rc_out = rc_raw;

@@ -4,7 +4,7 @@
 #include <alpha_msgs/RC.h>
 
 #define HIGH_THRESH 2000
-#define LOW_THRESH 1000
+#define LOW_THRESH 1110
 enum struct AlphaCommand{
   NONE,LOW,MID,HIGH,
 };
