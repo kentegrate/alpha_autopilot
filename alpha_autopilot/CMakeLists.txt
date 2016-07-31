@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11")
 find_package(catkin REQUIRED COMPONENTS
   alpha_msgs
   roscpp
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -85,7 +86,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
+ generate_dynamic_reconfigure_options(
+   cfg/DynamicPID.cfg
+)
 #   cfg/DynReconf1.cfg
 #   cfg/DynReconf2.cfg
 # )
@@ -119,10 +122,13 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(alpha_autopilot
-#   src/${PROJECT_NAME}/alpha_autopilot.cpp
-# )
-
+ add_library(PID
+   src/PID.cpp
+ )
+ target_link_libraries(PID
+   ${catkin_LIBRARIES}
+ )
+add_dependencies(PID ${alpha_msgs_EXPORTED_TARGETS} alpha_autopilot_gencfg)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
