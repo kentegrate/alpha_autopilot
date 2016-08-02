@@ -1,5 +1,5 @@
 #include <alpha_simulator/AircraftPlugin.h>
-
+#include <alpha_msgs/FilteredState.h>
 namespace gazebo
 {
   AircraftPlugin::~AircraftPlugin(){
@@ -14,7 +14,8 @@ namespace gazebo
       ros::init(argc,argv,"aircraft_plugin",ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
     }
     this->rosnode_ = new ros::NodeHandle;
-    this->rc_sub = this->rosnode_->subscribe("/rc",10,&AircraftPlugin::RCinput,this);
+    this->rc_sub = this->rosnode_->subscribe("/rc_out",10,&AircraftPlugin::RCinput,this);
+    this->pose_pub = this->rosnode_->advertise<alpha_msgs::FilteredState>("/pose",10);
     this->model = _parent;
     this->updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&AircraftPlugin::update,this,_1));
 
@@ -35,14 +36,15 @@ namespace gazebo
     aircraft_model.update(control,dt);
 
     aircraft_model.getGZPose(pose);
-
+    pose.pos.x = 0;//for debug
+    pose.pos.y = 0;
     this->model->SetWorldPose(pose);
     //    std::cout<<"pose "<<pose<<std::endl;
 
     last_update = common::Time::GetWallTime();
 
     if(ros::Time::now() > last_ros_update + update_rate){
-
+      publishOdometry(pose);
       ros::spinOnce();
       last_ros_update = ros::Time::now();
     }
@@ -60,6 +62,18 @@ namespace gazebo
 			   M_PI/3,-M_PI/3,
 			   1,-1);
 
+  }
+  void AircraftPlugin::publishOdometry(gazebo::math::Pose  pose){
+    alpha_msgs::FilteredState msg;
+    gazebo::math::Vector3 euler = pose.rot.GetAsEuler();
+    msg.x = pose.pos.x;
+    msg.y = pose.pos.y;
+    msg.z = pose.pos.z;
+
+    msg.roll = euler.x;
+    msg.pitch = euler.y;
+    msg.yaw = euler.z;
+    pose_pub.publish(msg);
   }
   GZ_REGISTER_MODEL_PLUGIN(AircraftPlugin)
 

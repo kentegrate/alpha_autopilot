@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="alpha_autopilot" name="pid_sample" type="PID_sample" output="screen">
+    <param name="roll/Kp" type="double" value="1.0"/>
+    <param name="roll/Ki" type="double" value="0.0"/>
+    <param name="roll/Kd" type="double" value="0.0"/>
+    <param name="roll/upper_limit" type="double" value="1000.0"/>
+    <param name="roll/lower_limit" type="double" value="-1000.0"/>
+    <param name="roll/windup_limit" type="double" value="100000.0"/>
+    <param name="roll/cutoff_frequency" type="double" value="-1.0"/>
+
+    <param name="pitch/Kp" type="double" value="1.0"/>
+    <param name="pitch/Ki" type="double" value="0.0"/>
+    <param name="pitch/Kd" type="double" value="0.0"/>
+    <param name="pitch/upper_limit" type="double" value="1000.0"/>
+    <param name="pitch/lower_limit" type="double" value="-1000.0"/>
+    <param name="pitch/windup_limit" type="double" value="100000.0"/>
+    <param name="pitch/cutoff_frequency" type="double" value="-1.0"/>
+
+  </node>
+</launch>
+	      

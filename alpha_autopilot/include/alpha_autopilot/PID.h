@@ -2,6 +2,7 @@
 #include <alpha_autopilot/DynamicPIDConfig.h>
 #include <dynamic_reconfigure/server.h>
 class PID{
+ public:
   void set_setpoint(double _setpoint);
   double update(double _state);
   PID(std::string _plant_name);
@@ -10,7 +11,6 @@ class PID{
 
   double setpoint;
   ros::Time prev_time;
-  ros::Duration delta_t;
 
   double error_integral;
 
@@ -37,10 +37,10 @@ class PID{
   std::vector<double> filtered_error_deriv;
   int loop_counter;
   std::string plant_name;
-
+  ros::NodeHandle private_nh;
   dynamic_reconfigure::Server<alpha_autopilot::DynamicPIDConfig> cfg_server;
   dynamic_reconfigure::Server<alpha_autopilot::DynamicPIDConfig>::CallbackType f;
   bool first_reconfig;
   
-  ros::NodeHandle private_nh;
+
 };

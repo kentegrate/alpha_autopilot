@@ -49,6 +49,7 @@ find_package(catkin REQUIRED COMPONENTS
    IMU.msg
    AirPressure.msg
    RC.msg
+   FilteredState.msg
 #   Message1.msg
 #   Message2.msg
  )

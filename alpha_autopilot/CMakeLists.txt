@@ -129,23 +129,31 @@ include_directories(
    ${catkin_LIBRARIES}
  )
 add_dependencies(PID ${alpha_msgs_EXPORTED_TARGETS} alpha_autopilot_gencfg)
+
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(alpha_autopilot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
- add_executable(alpha_autopilot_node src/Command_node.cpp
-   src/Command.cpp)
+ add_executable(alpha_autopilot_node src/AutoPilot.cpp src/AutoPilot_node.cpp   src/Missions.cpp
+   src/AlphaCommand.cpp
+)
 
-## Add cmake target dependencies of the executable
-## same as for the library above
-
-## Specify libraries to link a library or executable target against
  target_link_libraries(alpha_autopilot_node
    ${catkin_LIBRARIES}
+  PID
  )
  add_dependencies(alpha_autopilot_node ${alpha_msgs_EXPORTED_TARGETS})
+
+ add_executable(PID_sample src/PID_sample.cpp)
+ target_link_libraries(PID_sample
+   ${catkin_LIBRARIES}
+   PID
+ )
+
+
 
 #############
 ## Install ##

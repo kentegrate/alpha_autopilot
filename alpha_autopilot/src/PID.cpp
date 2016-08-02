@@ -17,9 +17,7 @@ PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3
   tan_filt = 1.;
 
   // Upper and lower saturation limits
-  upper_limit =  1000.;
-  lower_limit = -1000.; 
-  windup_limit = 1000.; // Anti-windup term. Limits the absolute value of the integral term.
+
   loop_counter = 0;
 
   plant_name = _plant_name;
@@ -27,6 +25,17 @@ PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3
   f = boost::bind(&PID::_reconfig_CB,this,_1,_2);
   cfg_server.setCallback(f);
   first_reconfig = false;
+
+  private_nh.getParam("Kp",Kp);
+  private_nh.getParam("Ki",Ki);
+  private_nh.getParam("Kd",Kd);
+
+  private_nh.getParam("upper_limit",upper_limit);
+  private_nh.getParam("lower_limit",lower_limit);
+  private_nh.getParam("windup_limit",windup_limit);
+
+  private_nh.getParam("cutoff_frequency",cutoff_frequency);
+  
 }
 
 
@@ -40,6 +49,8 @@ double PID::update(double _state){
   error[2] = error[1];
   error[1] = error[0];
   error[0] = setpoint - _state;
+
+  ros::Duration delta_t;
 
   if(!prev_time.isZero()){
     delta_t = ros::Time::now() - prev_time;
@@ -119,4 +130,7 @@ void PID::_reconfig_CB(alpha_autopilot::DynamicPIDConfig &config, uint32_t level
   Kd = config.Kd * config.Kd_scale;
   ROS_INFO("Pid reconfigure request: Kp: %f, Ki: %f, Kd: %f", Kp, Ki, Kd);
 
+}
+void PID::set_setpoint(double _setpoint){
+  setpoint = _setpoint;
 }
