@@ -12,16 +12,18 @@ double get_dtime(void)
 
 int main(int argc, char* argv[]){
   ros::init(argc,argv,"autopilot_node");
-  //  ros::NodeHandle nh;
+  ros::NodeHandle nh;
   AutoPilot autopilot;
   autopilot.init();
-
+  ros::Rate rate(100);
   double last_time = get_dtime();
   while(ros::ok()){
     //    if(last_time + 10 < get_dtime()){
       autopilot.update();
+
       ros::spinOnce();
-      //      last_time = get_dtime();
+      rate.sleep();
+      //last_time = get_dtime();
       //    }
 
   }
