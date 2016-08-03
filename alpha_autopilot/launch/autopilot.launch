@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-	<!--include file="$(find alpha_drivers)/launch/drivers.launch"/-->
+	<include file="$(find alpha_drivers)/launch/drivers.launch"/>
 
 	<node pkg="alpha_autopilot" name="autopilot_node" type="alpha_autopilot_node" respawn="true" output="screen">
 	  <param name="roll/Kp" type="double" value="-8.0"/>
