@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
   gpio.init();
   rcin.init();
   //  scheduler.system_initialized();
-  ros::Rate rate(2000);
+  ros::Rate rate(500);
   while(rcin.ok()){
     rcin._timer_tick();
     if(rcin.new_input()){

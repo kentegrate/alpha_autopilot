@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 
 
   need_init = false;
-  ros::Rate rate(30);
+  ros::Rate rate(100);
   while(ros::ok()){
     ros::spinOnce();
     rate.sleep();

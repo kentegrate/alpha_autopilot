@@ -24,10 +24,13 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"simple_pose_node");
 
   ros::NodeHandle nh;
-
+  ros::Rate rate(100);
   ros::Subscriber ahrs_sub = nh.subscribe("/ahrs",10,ahrs_cb);
   pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
-  ros::spin();
+  while(ros::ok()){
+    ros::spinOnce();
+    rate.sleep();
+  }
 
   return 0;
 

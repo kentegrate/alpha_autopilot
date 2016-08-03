@@ -18,14 +18,10 @@ int main(int argc, char* argv[]){
   ros::Rate rate(100);
   double last_time = get_dtime();
   while(ros::ok()){
-    //    if(last_time + 10 < get_dtime()){
       autopilot.update();
 
       ros::spinOnce();
       rate.sleep();
-      //last_time = get_dtime();
-      //    }
-
   }
   return 0;
 }
