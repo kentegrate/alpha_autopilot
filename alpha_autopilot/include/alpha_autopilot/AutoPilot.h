@@ -5,6 +5,7 @@
 #include <alpha_msgs/FilteredState.h>
 #include <alpha_msgs/RC.h>
 #include <alpha_autopilot/AlphaMode.h>
+#include <std_msgs/Empty.h>
 #include <ros/ros.h>
 #include <vector>
 class AutoPilot{
@@ -18,6 +19,7 @@ class AutoPilot{
   ros::Subscriber rc_sub;
   ros::NodeHandle nh;
   ros::Publisher rc_pub;
+  ros::Publisher calibrate_pub;
   ros::Subscriber state_sub;
   
   AlphaState state;
@@ -34,6 +36,7 @@ class AutoPilot{
   void stateCB(alpha_msgs::FilteredState::ConstPtr msg);
   std::vector<int> compute_auto_rc_out(double roll_effort, double pitch_effort, double throttle);
   std::vector<int> compute_manual_rc_out(std::vector<int> rc_in);
+  void send_calibrate_request();
 
 };
 #endif //ALPHA_AUTOPILOT_H

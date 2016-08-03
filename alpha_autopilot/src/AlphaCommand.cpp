@@ -54,6 +54,8 @@ AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState current_sta
     new_mode = new Land(current_state,(*this));
   else if(AlphaCommand::SET_TRIM_CMD() == new_alpha_cmd)
     new_mode = new SetTrim;
+  else if(AlphaCommand::CALIBRATE_CMD() == new_alpha_cmd)
+    new_mode = new Calibrate;
   else if(AlphaCommand::SHUTDOWN_CMD() == new_alpha_cmd){//shutdown
     sync();
     reboot(LINUX_REBOOT_CMD_HALT);

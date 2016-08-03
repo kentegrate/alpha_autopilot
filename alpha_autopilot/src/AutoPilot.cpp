@@ -1,6 +1,5 @@
 #include <alpha_autopilot/AutoPilot.h>
 
-
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
   trim[0] = 1500;
@@ -41,6 +40,9 @@ void AutoPilot::update(){
     //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD())
       trim = rc_in;
+    else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD())
+      send_calibrate_request();
+	    
   }
 
   publishRC(rc_out);
@@ -63,6 +65,7 @@ void AutoPilot::init(){
   rc_sub = nh.subscribe("/rc_in",10,&AutoPilot::rcInputCB,this);
   rc_pub = nh.advertise<alpha_msgs::RC>("/rc_out",10);
   state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
+  calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
 }
 void AutoPilot::stateCB(alpha_msgs::FilteredState::ConstPtr msg){
 
@@ -90,4 +93,8 @@ void AutoPilot::publishRC(std::vector<int> &rc_out){
   }
   rc_pub.publish(msg);
   //  nh.setParam("/rc_out",rc_out);
+}
+void AutoPilot::send_calibrate_request(){
+  std_msgs::Empty msg;
+  calibrate_pub.publish(msg);
 }

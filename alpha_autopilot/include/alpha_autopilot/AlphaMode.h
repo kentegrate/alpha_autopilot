@@ -41,6 +41,14 @@ class SetTrim : public ManualMode{
     return AlphaCommand::SET_TRIM_CMD();
   }
 };
+class Calibrate : public ManualMode{
+ public:
+  Calibrate(){}
+  AlphaCommand getAlphaCommand(){
+    return AlphaCommand::CALIBRATE_CMD();
+  }
+};
+
 
 class AutoMode : public AlphaMode{
  public:

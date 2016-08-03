@@ -50,6 +50,11 @@ struct AlphaCommand{
 		     LogicLevel::LOW,LogicLevel::NONE,LogicLevel::NONE,LogicLevel::HIGH);
     return cmd;
   }
+  AlphaCommand static CALIBRATE_CMD(){
+    AlphaCommand cmd(LogicLevel::NONE,LogicLevel::NONE,LogicLevel::LOW,LogicLevel::NONE,
+		     LogicLevel::HIGH,LogicLevel::HIGH,LogicLevel::LOW,LogicLevel::LOW);
+    return cmd;
+  }
   AlphaCommand static SHUTDOWN_CMD(){
     AlphaCommand cmd(LogicLevel::NONE,LogicLevel::NONE,LogicLevel::LOW,LogicLevel::NONE,
 		     LogicLevel::HIGH,LogicLevel::HIGH,LogicLevel::HIGH,LogicLevel::HIGH);
