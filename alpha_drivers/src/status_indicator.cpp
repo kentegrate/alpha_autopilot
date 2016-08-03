@@ -22,12 +22,13 @@ double get_dtime(void)
 void calibrateCB(std_msgs::Empty::ConstPtr msg){
   calibrate_start_time = get_dtime();
   calibrating = true;
+  digitalWrite(CALIBRATE_LED_PIN,0);        
 }
 
 int main(int argc, char* argv[]){
   ros::init(argc,argv,"status_indicator");
   ros::NodeHandle nh;
-  ros::Subscriber calibrate_sub = nh.subscribe("/calibrate",10,calibrateCB);
+  ros::Subscriber calibrate_sub = nh.subscribe("/calibrate",1,calibrateCB);
   if(wiringPiSetupGpio() == -1) return 1;
   pinMode(READY_LED_PIN,OUTPUT);
   pinMode(CALIBRATE_LED_PIN,OUTPUT);
@@ -52,13 +53,12 @@ int main(int argc, char* argv[]){
       }
     }
 
-    if(calibrating){
-      digitalWrite(CALIBRATE_LED_PIN,0);      
-      if(get_dtime() > calibrate_start_time + CALIBRATE_TIME){
-	calibrating = false;
-	digitalWrite(CALIBRATE_LED_PIN,1);
-      }
+
+    if(calibrating && (get_dtime() > calibrate_start_time + CALIBRATE_TIME)){
+      calibrating = false;
+      digitalWrite(CALIBRATE_LED_PIN,1);
     }
+    ros::spinOnce();
     rate.sleep();    
   }
     
