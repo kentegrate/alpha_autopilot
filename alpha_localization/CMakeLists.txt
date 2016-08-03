@@ -181,6 +181,11 @@ target_link_libraries(ahrs_node
 )
 add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
 
+add_executable(simple_pose_node src/simple_pose.cpp)
+target_link_libraries(simple_pose_node
+  ${catkin_LIBRARIES}
+)
+add_dependencies(simple_pose_node ${alpha_msgs_EXPORTED_TARGETS})
 
 
 #############
