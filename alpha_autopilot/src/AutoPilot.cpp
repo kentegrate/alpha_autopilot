@@ -23,11 +23,15 @@ void AutoPilot::update(){
 
     pid_roll.set_setpoint(setpoint.rot.x);
     double roll_effort = pid_roll.update(state.rot.x);
+    std::cout<<"roll setpoint "<<setpoint.rot.x<<std::endl;
+    std::cout<<"roll state " <<state.rot.x<<std::endl;
+    std::cout<<"roll effort "<<roll_effort<<std::endl;
     pid_pitch.set_setpoint(setpoint.rot.y);
     double pitch_effort = pid_pitch.update(state.rot.y);
     //    double throttle = automode->get_throttle();
     double throttle = rc_in[THROTTLE_CH];//for debug
     rc_out = compute_auto_rc_out(roll_effort,pitch_effort,throttle);//use trim 
+    rc_out[ELEVATOR_CH] = rc_in[ELEVATOR_CH];//for debug
     //turn on the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     //TODO : throttle effort may be needed
     
@@ -40,14 +44,13 @@ void AutoPilot::update(){
   }
 
   publishRC(rc_out);
-
 }
 std::vector<int> AutoPilot::compute_auto_rc_out(double roll_effort,double pitch_effort,double throttle){
   std::vector<int> rc_out = trim;
   rc_out[AUTOPILOT_LED_CH] = 4096;
   rc_out[THROTTLE_CH] = throttle;
-  rc_out[ELEVATOR_CH] += pitch_effort;// i think there needs to be a magnitude here
-  rc_out[RUDDER_CH] += roll_effort;
+  //  rc_out[ELEVATOR_CH] += pitch_effort;// i think there needs to be a magnitude here
+  rc_out[RUDDER_CH] += roll_effort*100;
   return rc_out;
 }
 std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
@@ -62,6 +65,7 @@ void AutoPilot::init(){
   state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
 }
 void AutoPilot::stateCB(alpha_msgs::FilteredState::ConstPtr msg){
+
   state.pos.x = msg->x;
   state.pos.y = msg->y;
   state.pos.z = msg->z;
@@ -85,5 +89,5 @@ void AutoPilot::publishRC(std::vector<int> &rc_out){
     msg.Channel.push_back(rc_out[i]);
   }
   rc_pub.publish(msg);
-
+  //  nh.setParam("/rc_out",rc_out);
 }

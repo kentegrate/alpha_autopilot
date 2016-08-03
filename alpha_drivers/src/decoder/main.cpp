@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"sbus_decoder",ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
 
-  ros::Publisher pub = n.advertise<alpha_msgs::RC>("/rc_raw",10);
+  ros::Publisher pub = n.advertise<alpha_msgs::RC>("/rc_in",10);
 
   GPIO_RPI gpio;
   rcin.set_gpio(&gpio);

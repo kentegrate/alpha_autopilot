@@ -22,7 +22,7 @@ namespace gazebo{
 
   protected:
     virtual void update(const common::UpdateInfo &/*_info*/);
-    virtual void RCinput(const alpha_msgs::RC::ConstPtr msg);
+    virtual void RCinput();
     virtual void publishOdometry(gazebo::math::Pose pose);
   private:
     ros::NodeHandle* rosnode_;

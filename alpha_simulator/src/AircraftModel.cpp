@@ -33,7 +33,7 @@ void AircraftModel::getGZPose(gazebo::math::Pose &pose){
   //  Vector3 p(pose.pos.x,-pose.pos.z,-pose.pos.y);
   pose.pos = gazebo_p;
   pose.rot = gazebo_q;//*factor;
-  std::cout<<"pose_raw"<<pose<<std::endl;
+  //  std::cout<<"pose_raw"<<pose<<std::endl;
 
 }
 void AircraftModel::update(AircraftControl input, double dt){
