@@ -18,6 +18,10 @@ void AutoPilot::update(){
   if(current_mode->isAuto()){
     AutoMode* automode = static_cast<AutoMode*>(current_mode);
     AlphaState setpoint;
+    if(automode->isInitial()){
+      pid_roll.initialize();
+      pid_pitch.initialize();
+    }
     setpoint = automode->get_setpoint(state);
 
     pid_roll.set_setpoint(setpoint.rot.x);

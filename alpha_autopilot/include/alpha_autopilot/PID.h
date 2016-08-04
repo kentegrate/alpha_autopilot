@@ -6,6 +6,7 @@ class PID{
   void set_setpoint(double _setpoint);
   double update(double _state);
   PID(std::string _plant_name);
+  void initialize();
  private:
   void _reconfig_CB(alpha_autopilot::DynamicPIDConfig &config, uint32_t level);
 

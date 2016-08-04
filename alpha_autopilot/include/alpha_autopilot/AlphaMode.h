@@ -9,16 +9,18 @@
 
 #include <alpha_autopilot/AlphaCommand.h>
 #include <alpha_autopilot/Types.h>
-
 class AlphaMode{
   /*  enum{
   MANUAL,AUTO_HORIZONTAL_TURN,AUTO_EIGHT_TURN,
   AUTO_RISE_TURN,AUTO_GLIDE,AUTO_LANDING,SET_TRIM,
   SHUTDOWN,
   }*/
+
+
  public:
   AlphaMode(){
   }
+  
   virtual AlphaCommand getAlphaCommand()=0;
   virtual bool isAuto()= 0;
 };
@@ -51,7 +53,11 @@ class Calibrate : public ManualMode{
 
 
 class AutoMode : public AlphaMode{
+
+
  public:
+  bool is_initial = true;
+  bool isInitial(){return is_initial;}
   virtual AlphaState get_setpoint(AlphaState state)= 0;
   double get_throttle(){
     return initial_rc_in[THROTTLE_CH];

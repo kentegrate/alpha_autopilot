@@ -1,7 +1,6 @@
 #include <alpha_autopilot/PID.h>
 
-PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3,0), filtered_error_deriv(3,0),private_nh("~/"+_plant_name),cfg_server(private_nh){
-
+void PID::initialize(){
   setpoint = 0;
   error_integral = 0.;
 
@@ -19,6 +18,20 @@ PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3
   // Upper and lower saturation limits
 
   loop_counter = 0;
+  prev_time = ros::Time();
+
+  for(int i = 0; i < 3; i++){
+    error[i] = 0;
+    filtered_error[i] = 0;
+    error_deriv[i] = 0;
+    filtered_error_deriv[i]=0;
+  }
+}
+
+  
+
+PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3,0), filtered_error_deriv(3,0),private_nh("~/"+_plant_name),cfg_server(private_nh){
+
 
   plant_name = _plant_name;
 
