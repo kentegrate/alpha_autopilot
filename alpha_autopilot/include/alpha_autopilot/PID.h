@@ -3,39 +3,39 @@
 #include <dynamic_reconfigure/server.h>
 class PID{
  public:
-  void set_setpoint(double _setpoint);
-  double update(double _state);
+  void set_setpoint(float _setpoint);
+  float update(float _state);
   PID(std::string _plant_name);
   void initialize();
  private:
   void _reconfig_CB(alpha_autopilot::DynamicPIDConfig &config, uint32_t level);
 
-  double setpoint;
+  float setpoint;
   ros::Time prev_time;
 
-  double error_integral;
+  float error_integral;
 
-  double Kp, Ki, Kd;   // PID loop parameters
+  float Kp, Ki, Kd;   // PID loop parameters
 
   // Cutoff frequency for the derivative calculation in Hz.
   // Negative -> Has not been set by the user yet, so use a default.
-  double cutoff_frequency; 
+  float cutoff_frequency; 
 
   // Used in filter calculations. Default 1.0 corresponds to a cutoff frequency at
   // 1/4 of the sample rate.
-  double c;
+  float c;
 
   // Used to check for tan(0)==>NaN in the filter calculation
-  double tan_filt;
+  float tan_filt;
 
   // Upper and lower saturation limits
-  double upper_limit;
-  double lower_limit;
-  double windup_limit; // Anti-windup term. Limits the absolute value of the integral term.
-  std::vector<double> error;
-  std::vector<double> filtered_error;
-  std::vector<double> error_deriv;
-  std::vector<double> filtered_error_deriv;
+  float upper_limit;
+  float lower_limit;
+  float windup_limit; // Anti-windup term. Limits the absolute value of the integral term.
+  std::vector<float> error;
+  std::vector<float> filtered_error;
+  std::vector<float> error_deriv;
+  std::vector<float> filtered_error_deriv;
   int loop_counter;
   std::string plant_name;
   ros::NodeHandle private_nh;

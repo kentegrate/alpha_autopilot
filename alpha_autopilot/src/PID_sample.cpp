@@ -2,8 +2,8 @@
 
 #include <ros/ros.h>
 
-double Uniform( void ){
-  return ((double)rand()+1.0)/((double)RAND_MAX+2.0);
+float Uniform( void ){
+  return ((float)rand()+1.0)/((float)RAND_MAX+2.0);
 }
 
 
@@ -13,12 +13,12 @@ int main(int argc, char* argv[]){
   ros::NodeHandle nh;
   PID pid("roll");
   pid.set_setpoint(5);
-  double roll_state = -1;
+  float roll_state = -1;
   ros::Rate rate(30);
   while(ros::ok()){
     
 
-    double effort = pid.update(roll_state);
+    float effort = pid.update(roll_state);
     //    std::cout<<"effort "<<effort<<std::endl;
     roll_state += effort;
     roll_state += Uniform() - 0.5;

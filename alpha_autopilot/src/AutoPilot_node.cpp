@@ -2,12 +2,12 @@
 #include <alpha_autopilot/AutoPilot.h>
 
 
-double get_dtime(void)
+float get_dtime(void)
 {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   //ミリ秒を計算
-  return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); //★
+  return ((float)(tv.tv_sec)*1000 + (float)(tv.tv_usec)*0.001); //★
 }
 
 int main(int argc, char* argv[]){
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
   AutoPilot autopilot;
   autopilot.init();
   ros::Rate rate(100);
-  double last_time = get_dtime();
+  float last_time = get_dtime();
   while(ros::ok()){
       autopilot.update();
 

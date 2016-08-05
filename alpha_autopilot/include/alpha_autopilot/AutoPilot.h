@@ -34,7 +34,7 @@ class AutoPilot{
   void rcInputCB(alpha_msgs::RC::ConstPtr msg);
   void publishRC(std::vector<int> &rc_out);
   void stateCB(alpha_msgs::FilteredState::ConstPtr msg);
-  std::vector<int> compute_auto_rc_out(double roll_effort, double pitch_effort, double throttle);
+  std::vector<int> compute_auto_rc_out(float roll_effort, float pitch_effort, float throttle);
   std::vector<int> compute_manual_rc_out(std::vector<int> rc_in);
   void send_calibrate_request();
 

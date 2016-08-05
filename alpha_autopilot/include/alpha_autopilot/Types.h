@@ -1,9 +1,9 @@
 #ifndef ALPHA_AUTOPILOT_TYPES_H
 #define ALPHA_AUTOPILOT_TYPES_H
 struct Vector3{
-  double x;
-  double y;
-  double z;
+  float x;
+  float y;
+  float z;
   Vector3(){
     x = 0;
     y = 0;

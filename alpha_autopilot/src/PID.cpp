@@ -4,17 +4,6 @@ void PID::initialize(){
   setpoint = 0;
   error_integral = 0.;
 
-  // Cutoff frequency for the derivative calculation in Hz.
-  // Negative -> Has not been set by the user yet, so use a default.
-  cutoff_frequency = -1; 
-
-  // Used in filter calculations. Default 1.0 corresponds to a cutoff frequency at
-  // 1/4 of the sample rate.
-  c=1.;
-
-  // Used to check for tan(0)==>NaN in the filter calculation
-  tan_filt = 1.;
-
   // Upper and lower saturation limits
 
   loop_counter = 0;
@@ -48,12 +37,15 @@ PID::PID(std::string _plant_name):error(3,0), filtered_error(3,0), error_deriv(3
   private_nh.getParam("windup_limit",windup_limit);
 
   private_nh.getParam("cutoff_frequency",cutoff_frequency);
-  
+
+  // Cutoff frequency for the derivative calculation in Hz.
+  // Negative -> Has not been set by the user yet, so use a default.
+  cutoff_frequency = -1; 
 }
 
 
 
-double PID::update(double _state){
+float PID::update(float _state){
 
   if ( !((Kp<=0. && Ki<=0. && Kd<=0.) || (Kp>=0. && Ki>=0. && Kd>=0.)) ) // All 3 gains should have the same sign
     {
@@ -81,10 +73,15 @@ double PID::update(double _state){
   if(fabs(error_integral) > fabs(windup_limit))
     error_integral = fabs(windup_limit) * (error_integral > 0 ? 1 : -1);
 
+  // Used in filter calculations. Default 1.0 corresponds to a cutoff frequency at
+  // 1/4 of the sample rate.
+  float c=1;
+
   if (cutoff_frequency != -1)
     {
+
       // Check if tan(_) is really small, could cause c = NaN
-      tan_filt = tan( (cutoff_frequency*6.2832)*delta_t.toSec()/2 );
+      float tan_filt = tan( (cutoff_frequency*6.2832)*delta_t.toSec()/2 );
 
       // Avoid tan(0) ==> NaN
       if ( (tan_filt<=0.) && (tan_filt>-0.01) )
@@ -111,10 +108,10 @@ double PID::update(double _state){
 
 
   // calculate the control effort
-  double proportional = Kp * filtered_error[0];
-  double integral = Ki * error_integral;
-  double derivative = Kd * filtered_error_deriv[0];
-  double control_effort = proportional + integral + derivative;
+  float proportional = Kp * filtered_error[0];
+  float integral = Ki * error_integral;
+  float derivative = Kd * filtered_error_deriv[0];
+  float control_effort = proportional + integral + derivative;
 
   // Apply saturation limits
   if (control_effort > upper_limit)
@@ -144,6 +141,6 @@ void PID::_reconfig_CB(alpha_autopilot::DynamicPIDConfig &config, uint32_t level
   ROS_INFO("Pid reconfigure request: Kp: %f, Ki: %f, Kd: %f", Kp, Ki, Kd);
 
 }
-void PID::set_setpoint(double _setpoint){
+void PID::set_setpoint(float _setpoint){
   setpoint = _setpoint;
 }

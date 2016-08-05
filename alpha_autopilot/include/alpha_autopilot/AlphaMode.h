@@ -59,7 +59,7 @@ class AutoMode : public AlphaMode{
   bool is_initial = true;
   bool isInitial(){return is_initial;}
   virtual AlphaState get_setpoint(AlphaState state)= 0;
-  double get_throttle(){
+  float get_throttle(){
     return initial_rc_in[THROTTLE_CH];
   }
   AutoMode(AlphaState _initial_state,AlphaCommand _initial_rc_in){
