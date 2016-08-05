@@ -20,6 +20,10 @@ bool AlphaCommand::operator==(const AlphaCommand &that)const{
   return is_equal;
 
 }
+
+bool AlphaCommand::operator!=(const AlphaCommand &that)const{
+  return !((*this) == that);
+}
 AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState current_state){
 
   std::vector<int> descretized;

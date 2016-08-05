@@ -1,6 +1,6 @@
 #include <alpha_autopilot/AutoPilot.h>
 
-AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),trim(8,0),rc_in(8,0){
+AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_z("z"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
   trim[0] = 1500;
   trim[ELEVATOR_CH] = 1500;
@@ -21,20 +21,41 @@ void AutoPilot::update(){
     if(automode->isInitial()){
       pid_roll.initialize();
       pid_pitch.initialize();
+      pid_z.initialize();
     }
+
     setpoint = automode->get_setpoint(state);
 
     pid_roll.set_setpoint(setpoint.rot.x);
     float roll_effort = pid_roll.update(state.rot.x);
-    std::cout<<"roll setpoint "<<setpoint.rot.x<<std::endl;
-    std::cout<<"roll state " <<state.rot.x<<std::endl;
-    std::cout<<"roll effort "<<roll_effort<<std::endl;
+
+    if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_EIGHT_TURN_CMD()){
+      pid_z.set_setpoint(setpoint.pos.z);
+      setpoint.rot.y = pid_z.update(state.pos.z);
+    }
+    
     pid_pitch.set_setpoint(setpoint.rot.y);
     float pitch_effort = pid_pitch.update(state.rot.y);
     //    float throttle = automode->get_throttle();
     float throttle = rc_in[THROTTLE_CH];//for debug
     rc_out = compute_auto_rc_out(roll_effort,pitch_effort,throttle);//use trim 
-    rc_out[ELEVATOR_CH] = rc_in[ELEVATOR_CH];//for debug
+    if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_HORIZONTAL_TURN_CMD()){
+      rc_out[ELEVATOR_CH] = rc_in[ELEVATOR_CH];//for debug //automatic rudder
+    }
+    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_EIGHT_TURN_CMD()){
+      rc_out[RUDDER_CH] = rc_in[RUDDER_CH];//automatic elevator(keep pitch)
+    }
+    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_RISE_TURN_CMD()){
+      rc_out[RUDDER_CH] = rc_in[RUDDER_CH];//automatic elevator(keep altitude)
+    }
+    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_GLIDE_CMD()){
+      rc_out[RUDDER_CH] = rc_in[RUDDER_CH];//automatic elevator(keep initial_altitude +2 meters)
+    }
+    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_LANDING_CMD()){
+      //keep current altitude and turn
+    }
+
+
     //turn on the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     //TODO : throttle effort may be needed
     

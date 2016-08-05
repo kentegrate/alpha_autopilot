@@ -12,6 +12,7 @@ class AutoPilot{
  private:
   PID pid_roll;
   PID pid_pitch;
+  PID pid_z;
   
   std::vector<int> trim;
   std::vector<int> rc_in;

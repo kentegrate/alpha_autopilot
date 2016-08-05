@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
   ros::Subscriber imu_sub = nh.subscribe("/imu",1,imu_cb);
   ros::Subscriber baro_sub = nh.subscribe("/pressure",1,baro_cb);
   ros::Subscriber calib_sub = nh.subscribe("/calibrate",1,calib_cb);
-  pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose_2",10);
+  pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
   baro_raw_pub = nh.advertise<std_msgs::Float32>("/baro_altitude",10);
   ros::Duration calibration_time(3);
   ros::Time last_update;
