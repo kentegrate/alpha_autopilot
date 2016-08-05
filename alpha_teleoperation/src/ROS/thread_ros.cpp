@@ -6,7 +6,7 @@ Thread_ROS::Thread_ROS(Shared_Memory* share_memory)
     this->share_memory = share_memory;
 
     ros::NodeHandle n;
-    rc_override_pub = n.advertise< alpha_msgs::RC >("/rc", 10);
+    rc_override_pub = n.advertise< alpha_msgs::RC >("/rc_in", 10);
 
     std::vector<int> rc_maxlimits;
     std::vector<int> rc_minlimits;

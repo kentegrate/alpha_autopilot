@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(alpha_msgs)
-
+project(alpha_autopilot)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  message_generation
+  alpha_msgs
+  roscpp
+  dynamic_reconfigure
   std_msgs
 )
 
@@ -44,15 +46,11 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   IMU.msg
-   AirPressure.msg
-   RC.msg
-   FilteredState.msg
+# add_message_files(
+#   FILES
 #   Message1.msg
 #   Message2.msg
- )
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,12 +67,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   geometry_msgs
-   std_msgs
-#   sensor_msgs#   std_msgs
- )
+# generate_messages(
+#   DEPENDENCIES
+#   alpha_msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -91,7 +87,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
+ generate_dynamic_reconfigure_options(
+   cfg/DynamicPID.cfg
+)
 #   cfg/DynReconf1.cfg
 #   cfg/DynReconf2.cfg
 # )
@@ -106,9 +104,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES alpha_msgs
-  CATKIN_DEPENDS geometry_msgs std_msgs
+  INCLUDE_DIRS include
+#  LIBRARIES alpha_autopilot
+  CATKIN_DEPENDS alpha_msgs roscpp
 #  DEPENDS system_lib
 )
 
@@ -121,29 +119,42 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  include
 )
 
 ## Declare a C++ library
-# add_library(alpha_msgs
-#   src/${PROJECT_NAME}/alpha_msgs.cpp
-# )
+ add_library(PID
+   src/PID.cpp
+ )
+ target_link_libraries(PID
+   ${catkin_LIBRARIES}
+ )
+add_dependencies(PID ${alpha_msgs_EXPORTED_TARGETS} alpha_autopilot_gencfg)
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(alpha_msgs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(alpha_autopilot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(alpha_msgs_node src/alpha_msgs_node.cpp)
+ add_executable(alpha_autopilot_node src/AutoPilot.cpp src/AutoPilot_node.cpp   src/Missions.cpp
+   src/AlphaCommand.cpp
+)
 
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(alpha_msgs_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ target_link_libraries(alpha_autopilot_node
+   ${catkin_LIBRARIES}
+  PID
+ )
+ add_dependencies(alpha_autopilot_node ${alpha_msgs_EXPORTED_TARGETS})
 
-## Specify libraries to link a library or executable target against
-# target_link_libraries(alpha_msgs_node
-#   ${catkin_LIBRARIES}
-# )
+ add_executable(PID_sample src/PID_sample.cpp)
+ target_link_libraries(PID_sample
+   ${catkin_LIBRARIES}
+   PID
+ )
+
+
 
 #############
 ## Install ##
@@ -160,7 +171,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS alpha_msgs alpha_msgs_node
+# install(TARGETS alpha_autopilot alpha_autopilot_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -185,7 +196,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_alpha_msgs.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_alpha_autopilot.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

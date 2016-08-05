@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="$(find alpha_drivers)/launch/drivers.launch"/>
+	<node pkg="alpha_localization" name="ahrs_node" type="ahrs_node" respawn="true" output="screen"/>
+	<node pkg="alpha_localization" name="simple_pose_node" type="simple_pose_node" respawn="true" output="screen"/>
+
+	<node pkg="alpha_autopilot" name="autopilot_node" type="alpha_autopilot_node" respawn="true" output="screen">
+	  <param name="roll/Kp" type="double" value="58.0"/>
+	  <param name="roll/Ki" type="double" value="0.3"/>
+	  <param name="roll/Kd" type="double" value="0.0"/>
+	  <param name="roll/upper_limit" type="double" value="4.100"/>
+	  <param name="roll/lower_limit" type="double" value="-4.100"/>
+	  <param name="roll/windup_limit" type="double" value="100.0"/>
+	  <param name="roll/cutoff_frequency" type="double" value="-1.0"/>
+
+	  <param name="pitch/Kp" type="double" value="0.54"/>
+	  <param name="pitch/Ki" type="double" value="0.1"/>
+	  <param name="pitch/Kd" type="double" value="0.0"/>
+	  <param name="pitch/upper_limit" type="double" value="4.100"/>
+	  <param name="pitch/lower_limit" type="double" value="-4.100"/>
+	  <param name="pitch/windup_limit" type="double" value="100.0"/>
+	  <param name="pitch/cutoff_frequency" type="double" value="-1.0"/>
+
+	  <param name="z/Kp" type="double" value="-0.32"/>
+	  <param name="z/Ki" type="double" value="-0.1"/>
+	  <param name="z/Kd" type="double" value="0.0"/>
+	  <param name="z/upper_limit" type="double" value="0.4"/>
+	  <param name="z/lower_limit" type="double" value="-0.4"/>
+	  <param name="z/windup_limit" type="double" value="100000.0"/>
+	  <param name="z/cutoff_frequency" type="double" value="-1.0"/>
+
+	</node>
+
+</launch>

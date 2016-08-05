@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"sbus_decoder",ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
 
-  ros::Publisher pub = n.advertise<alpha_msgs::RC>("/rc",10);
+  ros::Publisher pub = n.advertise<alpha_msgs::RC>("/rc_in",10);
 
   GPIO_RPI gpio;
   rcin.set_gpio(&gpio);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
   gpio.init();
   rcin.init();
   //  scheduler.system_initialized();
-  ros::Rate rate(2000);
+  ros::Rate rate(500);
   while(rcin.ok()){
     rcin._timer_tick();
     if(rcin.new_input()){

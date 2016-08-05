@@ -1,14 +1,23 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(alpha_msgs)
+project(alpha_simulator)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  message_generation
+  alpha_msgs
+  sensor_msgs
   std_msgs
+  roscpp
+  gazebo_ros
+  gazebo_plugins
+  geometry_msgs
 )
+
+find_package(Boost REQUIRED COMPONENTS thread)
+find_package(gazebo REQUIRED)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -44,15 +53,11 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   IMU.msg
-   AirPressure.msg
-   RC.msg
-   FilteredState.msg
+# add_message_files(
+#   FILES
 #   Message1.msg
 #   Message2.msg
- )
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,12 +74,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   geometry_msgs
-   std_msgs
-#   sensor_msgs#   std_msgs
- )
+# generate_messages(
+#   DEPENDENCIES
+#   alpha_msgs#   sensor_msgs#   std_msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,9 +109,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES alpha_msgs
-  CATKIN_DEPENDS geometry_msgs std_msgs
+  INCLUDE_DIRS include
+  LIBRARIES alpha_simulator
+  CATKIN_DEPENDS gazebo_plugins gazebo_ros roscpp
 #  DEPENDS system_lib
 )
 
@@ -120,28 +123,56 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include 
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ${SDFormat_INCLUDE_DIRS}
 )
 
+link_directories(${GAZEBO_LIBRARY_DIRS})
+include_directories(
+  ${Boost_INCLUDE_DIR}
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+)
+
+
 ## Declare a C++ library
-# add_library(alpha_msgs
-#   src/${PROJECT_NAME}/alpha_msgs.cpp
+# add_library(alpha_simulator
+#   src/${PROJECT_NAME}/alpha_simulator.cpp
 # )
 
+
+add_library(gazebo_aircraft_plugin SHARED
+  src/AircraftModel.cpp
+  src/Properties.cpp
+  src/AircraftControl.cpp
+  src/AircraftPlugin.cpp)
+target_link_libraries(gazebo_aircraft_plugin
+  ${catkin_LIBRARIES}
+  ${GAZEBO_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${PROTUBUF_LIBRARIES}
+)
+add_dependencies(gazebo_aircraft_plugin ${alpha_msgs_EXPORTED_TARGETS})
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(alpha_msgs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(alpha_simulator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(alpha_msgs_node src/alpha_msgs_node.cpp)
+ add_executable(sensor_remapper src/SensorRemapper.cpp)
+target_link_libraries(sensor_remapper
+  ${catkin_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(alpha_msgs_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(alpha_simulator_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(alpha_msgs_node
+# target_link_libraries(alpha_simulator_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -160,7 +191,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS alpha_msgs alpha_msgs_node
+# install(TARGETS alpha_simulator alpha_simulator_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -185,7 +216,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_alpha_msgs.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_alpha_simulator.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
