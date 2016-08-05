@@ -76,7 +76,7 @@ std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_ef
   std::vector<int> rc_out = trim;
    rc_out[AUTOPILOT_LED_CH] = 4096;
     rc_out[THROTTLE_CH] = throttle;
-  //  rc_out[ELEVATOR_CH] += pitch_effort;// i think there needs to be a magnitude here
+    rc_out[ELEVATOR_CH] += pitch_effort*100;// i think there needs to be a magnitude here
     rc_out[RUDDER_CH] += roll_effort*100;
   return rc_out;
 }
