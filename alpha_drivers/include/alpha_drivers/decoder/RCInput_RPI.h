@@ -89,11 +89,7 @@ class RCInput_RPI : public RCInput
   //  Scheduler* scheduler;
   GPIO_RPI* gpio;
 
-  bool ok();
-  bool running;  
  private:
-
-
 
   //Physicaladresses of peripherals. Are different on different Raspberries.
   uint32_t dma_base;

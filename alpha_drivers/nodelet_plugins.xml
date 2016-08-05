@@ -1,0 +1,5 @@
+<library path="lib/libdecoder_nodelet">
+         <class name="alpha_autopilot/SBUSDecoder" type="alpha_autopilot::SBUSDecoder" base_class_type="nodelet::Nodelet">
+                 <description>SBUSDecoder nodelet</description>
+         </class>
+</library>

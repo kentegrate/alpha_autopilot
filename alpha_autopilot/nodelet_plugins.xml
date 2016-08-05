@@ -1,0 +1,5 @@
+<library path="lib/libalpha_autopilot_nodelet">
+	 <class name="alpha_autopilot/AutoPilot" type="alpha_autopilot::AutoPilot" base_class_type="nodelet::Nodelet">
+	 	 <description>AutoPilot nodelet</description>
+	 </class>
+</library>

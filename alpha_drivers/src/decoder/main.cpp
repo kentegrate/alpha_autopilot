@@ -1,12 +1,8 @@
-#include <alpha_drivers/decoder/GPIO_RPI.h>
-#include <alpha_drivers/decoder/RCInput_RPI.h>
-#include <alpha_msgs/RC.h>
-#include <ros/ros.h>
+
 RCInput_RPI rcin;
 
 void termination_handler(int sig){
   rcin.deinit();
-  rcin.running = false;
   ros::shutdown();
 }
 void print_ch(int ch){
@@ -39,8 +35,7 @@ int main(int argc, char* argv[]){
       for(int i = 0; i < LINUX_RC_INPUT_NUM_CHANNELS; i++)
 	msg.Channel.push_back(rcin.read(i));
       
-      pub.publish(msg);
-    }
+      pub.publish(msg);    }
     rate.sleep();
   }
 

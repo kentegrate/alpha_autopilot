@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   dynamic_reconfigure
   std_msgs
+  nodelet
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,22 +138,16 @@ add_dependencies(PID ${alpha_msgs_EXPORTED_TARGETS} alpha_autopilot_gencfg)
 ## either from message generation or dynamic reconfigure
 # add_dependencies(alpha_autopilot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Declare a C++ executable
- add_executable(alpha_autopilot_node src/AutoPilot.cpp src/AutoPilot_node.cpp   src/Missions.cpp
+# Declare a C++ executable
+ add_library(alpha_autopilot_nodelet src/AutoPilot.cpp  src/Missions.cpp
    src/AlphaCommand.cpp
 )
 
- target_link_libraries(alpha_autopilot_node
+ target_link_libraries(alpha_autopilot_nodelet
    ${catkin_LIBRARIES}
   PID
  )
- add_dependencies(alpha_autopilot_node ${alpha_msgs_EXPORTED_TARGETS})
-
- add_executable(PID_sample src/PID_sample.cpp)
- target_link_libraries(PID_sample
-   ${catkin_LIBRARIES}
-   PID
- )
+ add_dependencies(alpha_autopilot_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
 
 

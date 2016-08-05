@@ -436,10 +436,7 @@ void RCInput_RPI::deinit()
 {
   stop_dma();
 }
-bool RCInput_RPI::ok()
-{
-  return running;
-}
+
 /*void RCInput_RPI::set_scheduler(Scheduler *_scheduler){
   scheduler = _scheduler;
   }*/
@@ -481,7 +478,7 @@ void RCInput_RPI::init()
   last_signal = curr_signal;
   curr_pointer++;
 
-  running = true;
+  //  running = true;
 }
 
 

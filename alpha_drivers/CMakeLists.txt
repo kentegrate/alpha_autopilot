@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   alpha_msgs
   image_transport
   cv_bridge
+  nodelet
 )
 find_package(Boost 1.54.0 REQUIRED)
 
@@ -152,15 +153,15 @@ target_link_libraries(PCA9685
 #  ${catkin_LIBRARIES}
 #  ms5611
 #)
-add_executable (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
+add_executable (decoder_nodelet src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
                              src/decoder/sbus.cpp
 			     src/decoder/RCInput.cpp
-			     src/decoder/main.cpp)
-			   # src/decoder/Scheduler.cpp src/decoder/Thread.cpp
-target_link_libraries(sbus_decoder
+			     src/decoer/decoder_nodelet.cpp)
+
+target_link_libraries(decoder_nodelet
   ${catkin_LIBRARIES}
 )
-add_dependencies(sbus_decoder ${alpha_msgs_EXPORTED_TARGETS})
+add_dependencies(decoder_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
 add_executable(spi_sensors src/spi_sensors.cpp)
 target_link_libraries(spi_sensors
