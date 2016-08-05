@@ -1,5 +1,19 @@
-<library path="lib/libdecoder_nodelet">
-         <class name="alpha_autopilot/SBUSDecoder" type="alpha_autopilot::SBUSDecoder" base_class_type="nodelet::Nodelet">
-                 <description>SBUSDecoder nodelet</description>
-         </class>
-</library>
+<class_libraries>
+  <library path="lib/libdecoder_nodelet">
+    <class name="alpha_autopilot/SBUSDecoder" type="alpha_autopilot::SBUSDecoder" base_class_type="nodelet::Nodelet">
+      <description>SBUSDecoder nodelet</description>
+    </class>
+  </library>
+  <library path="lib/libspi_sensors_nodelet">
+    <class name="alpha_autopilot/SPISensors" type="alpha_autopilot::SPISensors" base_class_type="nodelet::Nodelet">
+      <description>SPISensors nodelet</description>
+    </class>
+  </library>
+  <library path="lib/librcout_nodelet">
+    <class name="alpha_autopilot/RCOut" type="alpha_autopilot::RCOut" base_class_type="nodelet::Nodelet">
+      <description>RCOut nodelet</description>
+    </class>
+  </library>
+
+</class_libraries>
+

@@ -1,0 +1,15 @@
+<class_libraries>
+  <library path="lib/libahrs_nodelet">
+    <class name="alpha_autopilot/AHRSNodelet" type="alpha_autopilot::AHRSNodelet" base_class_type="nodelet::Nodelet">
+      <description>AHRS nodelet</description>
+    </class>
+  </library>
+
+  <library path="lib/libpose_nodelet">
+    <class name="alpha_autopilot/PoseNodelet" type="alpha_autopilot::PoseNodelet" base_class_type="nodelet::Nodelet">
+      <description>Pose nodelet</description>
+    </class>
+  </library>
+
+</class_libraries>
+

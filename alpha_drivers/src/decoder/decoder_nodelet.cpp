@@ -8,7 +8,7 @@ namespace alpha_autopilot{
     rcin.init();
     event_timer = nh.createTimer(ros::Duration(0.002),&SBUSDecoder::timerEvent,this);
   }
-  SBUSDecoder::timerEvent(){
+  SBUSDecoder::timerEvent(const ros::TimerEvent &msg){
     rcin._timer_tick();
     if(rcin.new_input()){
       alpha_msgs::RCPtr msg(new alpha_msgs::RC);

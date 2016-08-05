@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   alpha_msgs
   sensor_msgs
+  nodelet
 )
 
 ## System dependencies are found with CMake's conventions
@@ -174,18 +175,18 @@ target_link_libraries(ahrs
   ${catkin_LIBRARIES}
 )
 
-add_executable(ahrs_node src/ahrs_node.cpp)
-target_link_libraries(ahrs_node
+add_library(ahrs_nodelet src/ahrs_nodelet.cpp)
+target_link_libraries(ahrs_nodelet
   ahrs
   ${catkin_LIBRARIES}
 )
-add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
+add_dependencies(ahrs_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(simple_pose_node src/simple_pose.cpp)
-target_link_libraries(simple_pose_node
+add_library(pose_nodelet src/pose_nodelet.cpp)
+target_link_libraries(pose_nodelet
   ${catkin_LIBRARIES}
 )
-add_dependencies(simple_pose_node ${alpha_msgs_EXPORTED_TARGETS})
+add_dependencies(pose_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
 
 #############

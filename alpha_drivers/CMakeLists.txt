@@ -156,28 +156,28 @@ target_link_libraries(PCA9685
 add_executable (decoder_nodelet src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
                              src/decoder/sbus.cpp
 			     src/decoder/RCInput.cpp
-			     src/decoer/decoder_nodelet.cpp)
+			     src/decoder/decoder_nodelet.cpp)
 
 target_link_libraries(decoder_nodelet
   ${catkin_LIBRARIES}
 )
 add_dependencies(decoder_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(spi_sensors src/spi_sensors.cpp)
-target_link_libraries(spi_sensors
+add_executable(spi_sensors_nodelet src/spi_sensors_nodelet.cpp)
+target_link_libraries(spi_sensors_nodelet
   ${catkin_LIBRARIES}
   mpu9250
   ms5611
   )
-add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
+add_dependencies(spi_sensors_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(rcout_node src/RCOut_node.cpp)
-target_link_libraries(rcout_node
+add_executable(rcout_nodelet src/RCOut_nodelet.cpp)
+target_link_libraries(rcout_nodelet
   ${catkin_LIBRARIES}
   PCA9685
   wiringPi
   )
-add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
+add_dependencies(rcout_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
 add_executable(camera_node src/raspi_camera.cpp)
 target_link_libraries(camera_node
