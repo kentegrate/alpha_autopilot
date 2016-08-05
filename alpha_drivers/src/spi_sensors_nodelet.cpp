@@ -27,31 +27,31 @@ namespace alpha_autopilot{
   }
 
   void SPISensors::updatePressure(){
-    switch(state){
-    case STATE_INITIAL:
+    switch(barometer_state){
+    case BARO_STATE_INITIAL:
       barometer.refreshPressure();
       last_baro_time = get_ftime();
-      state = STATE_WAIT_PRESSURE;
+      barometer_state = BARO_STATE_WAIT_PRESSURE;
       break;
-    case STATE_WAIT_PRESSURE:
+    case BARO_STATE_WAIT_PRESSURE:
       if(get_ftime()-last_baro_time > 10){
 	barometer.readPressure();
 	barometer.refreshTemperature();
-	state = STATE_WAIT_TEMPERATURE;
+	barometer_state = BARO_STATE_WAIT_TEMPERATURE;
 	last_baro_time = get_ftime();
       }
       break;
-    case STATE_WAIT_TEMPERATURE:
+    case BARO_STATE_WAIT_TEMPERATURE:
       if(get_ftime()-last_baro_time > 10){
 	barometer.readTemperature();
 	barometer.calculatePressureAndTemperature();
 	barometer.refreshPressure();
 	last_baro_time = get_ftime();
-	state = STATE_WAIT_PRESSURE;
+	barometer_state = BARO_STATE_WAIT_PRESSURE;
       }
       break;
     }
-    void barometer.getPressure();
+    pressure = barometer.getPressure();
   }
   void SPISensors::updateIMU(){
     imu.getMotion9(&accel[0],&accel[1],&accel[2],

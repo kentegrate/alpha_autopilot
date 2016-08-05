@@ -153,7 +153,7 @@ target_link_libraries(PCA9685
 #  ${catkin_LIBRARIES}
 #  ms5611
 #)
-add_executable (decoder_nodelet src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
+add_library (decoder_nodelet src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
                              src/decoder/sbus.cpp
 			     src/decoder/RCInput.cpp
 			     src/decoder/decoder_nodelet.cpp)
@@ -163,7 +163,7 @@ target_link_libraries(decoder_nodelet
 )
 add_dependencies(decoder_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(spi_sensors_nodelet src/spi_sensors_nodelet.cpp)
+add_library(spi_sensors_nodelet src/spi_sensors_nodelet.cpp)
 target_link_libraries(spi_sensors_nodelet
   ${catkin_LIBRARIES}
   mpu9250
@@ -171,7 +171,7 @@ target_link_libraries(spi_sensors_nodelet
   )
 add_dependencies(spi_sensors_nodelet ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(rcout_nodelet src/RCOut_nodelet.cpp)
+add_library(rcout_nodelet src/RCOut_nodelet.cpp)
 target_link_libraries(rcout_nodelet
   ${catkin_LIBRARIES}
   PCA9685

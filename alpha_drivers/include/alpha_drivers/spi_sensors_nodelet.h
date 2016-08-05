@@ -18,8 +18,10 @@ namespace alpha_autopilot{
     virtual void onInit();
     float last_baro_time;
     void updatePressure();
-
+    void updateIMU();
     void updateSensors(const ros::TimerEvent &msg);
+    void publish_baro();
+    void publish_imu();
     
     ros::Timer event_timer;
     ros::Publisher baro_pub;
@@ -30,7 +32,7 @@ namespace alpha_autopilot{
     float mag[3];
 
     MS5611 barometer;
-    int batometer_state = BARO_STATE_INITIAL;
+    int barometer_state = BARO_STATE_INITIAL;
     float pressure;
   };
 

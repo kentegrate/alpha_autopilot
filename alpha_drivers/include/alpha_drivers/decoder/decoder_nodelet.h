@@ -12,13 +12,13 @@ namespace alpha_autopilot{
   private:
     ros::Publisher rc_pub;
     GPIO_RPI gpio;
-    RCInput_RPI;
+    RCInput_RPI rcin;
     ros::Timer event_timer;
   public:
     SBUSDecoder(){
       rcin.set_gpio(&gpio);
     }
-    ~SUBSDecoder(){
+    ~SBUSDecoder(){
       rcin.deinit();
     }
     virtual void onInit();

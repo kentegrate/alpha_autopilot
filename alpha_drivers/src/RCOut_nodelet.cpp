@@ -21,7 +21,10 @@ namespace alpha_autopilot{
     set_pulse(pulse);
   }
   void RCOut::rc_sub(const alpha_msgs::RC::ConstPtr msg){
-    set_pulse(msg->Channel);
+    int16_t pulse[8];
+    for(int i = 0; i < 8;i++)
+      pulse[i] =msg->Channel[i];
+    set_pulse(pulse);
   }
   void RCOut::set_pulse(int16_t* pulse){
     for(int i = 0; i < 8; i++)
