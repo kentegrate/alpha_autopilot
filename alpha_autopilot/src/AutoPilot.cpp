@@ -12,7 +12,7 @@ namespace alpha_autopilot{
     delete current_mode;
   }
 
-  void AutoPilot::update(){
+  void AutoPilot::update(const ros::TimerEvent &msg){
 
     std::vector<int> rc_out;
 
@@ -93,6 +93,7 @@ namespace alpha_autopilot{
     rc_pub = nh.advertise<alpha_msgs::RC>("/rc_out",10);
     state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
     calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
+    eventTimer = nh.createTimer(ros::Duration(0.01),&AutoPilot::update,this);
   }
   void AutoPilot::stateCB(alpha_msgs::FilteredStateConstPtr msg){
 
@@ -122,7 +123,7 @@ namespace alpha_autopilot{
     //  nh.setParam("/rc_out",rc_out); for debug on Gazebo
   }
   void AutoPilot::send_calibrate_request(){
-    std_msgs::EmptyPtr msg(new std_msgs::Empty);
+    std_msgs::Empty msg;
     calibrate_pub.publish(msg);
   }
   PLUGINLIB_DECLARE_CLASS(alpha_autopilot,AutoPilot,alpha_autopilot::AutoPilot, nodelet::Nodelet);

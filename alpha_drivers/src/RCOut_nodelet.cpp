@@ -9,6 +9,7 @@ namespace alpha_autopilot{
   void RCOut::onInit(){
     ros::NodeHandle &nh = getNodeHandle();
     sub = nh.subscribe("/rc_out",1,&RCOut::rc_sub,this);
+    if(wiringPiSetupGpio() == -1) return;
     pinMode(27,OUTPUT);
     digitalWrite(27,0);//enable pwm output
 
@@ -18,18 +19,20 @@ namespace alpha_autopilot{
     usleep(100000);
 
     pwm.setPWMFreq(60);
-    int16_t pulse[8];
+    int pulse[8];
     for(int i = 0; i < 8; i++)
       pulse[i] = 0;
     set_pulse(pulse);
   }
   void RCOut::rc_sub(const alpha_msgs::RCConstPtr msg){
-    int16_t pulse[8];
+    if(msg->Channel.size() < 8)
+      return;
+    int pulse[8];
     for(int i = 0; i < 8;i++)
       pulse[i] =msg->Channel[i];
     set_pulse(pulse);
   }
-  void RCOut::set_pulse(int16_t* pulse){
+  void RCOut::set_pulse(int* pulse){
     for(int i = 0; i < 8; i++)
       pwm.setServoPulse(i+3,pulse[i]);
   }

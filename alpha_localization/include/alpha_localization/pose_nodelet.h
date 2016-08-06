@@ -12,6 +12,9 @@
 
 namespace alpha_autopilot{
   class PoseNodelet : public nodelet::Nodelet{
+  public:
+  PoseNodelet():calibration_duration(3){}
+  private:
     ros::Publisher pose_pub;
     ros::Subscriber ahrs_sub;
     ros::Subscriber imu_sub;
@@ -31,7 +34,7 @@ namespace alpha_autopilot{
     bool calibrating;
     bool calibrated;
     int baro_count;
-    bool baro_sum;
+    float baro_sum;
     float k_vz;
     float k_z;
     float baro_altitude;

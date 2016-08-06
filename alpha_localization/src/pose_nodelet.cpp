@@ -6,6 +6,7 @@ namespace alpha_autopilot{
   void PoseNodelet::onInit(){
     
     ros::NodeHandle &nh = getNodeHandle();
+
     ahrs_sub = nh.subscribe("/ahrs",10,&PoseNodelet::ahrs_cb,this);
     imu_sub = nh.subscribe("/imu",1,&PoseNodelet::imu_cb,this);
     baro_sub = nh.subscribe("/pressure",1,&PoseNodelet::baro_cb,this);
@@ -25,7 +26,7 @@ namespace alpha_autopilot{
     temp = 30;
     az_offset = 0;
 
-    q_raw.w = 0;
+    q_raw.w = 1;
   }
 
   void PoseNodelet::ahrs_cb(const geometry_msgs::QuaternionConstPtr msg){

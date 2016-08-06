@@ -23,7 +23,7 @@ namespace alpha_autopilot{
     ros::Publisher rc_pub;
     ros::Publisher calibrate_pub;
     ros::Subscriber state_sub;
-  
+    ros::Timer eventTimer;
     AlphaState state;
 
   public:
@@ -31,7 +31,7 @@ namespace alpha_autopilot{
     ~AutoPilot();  
     virtual void onInit();
     AlphaMode* current_mode;
-    void update();
+    void update(const ros::TimerEvent &msg);
   private:
     void rcInputCB(alpha_msgs::RCConstPtr msg);
     void publishRC(std::vector<int> &rc_out);

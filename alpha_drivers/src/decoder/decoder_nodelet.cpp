@@ -6,7 +6,7 @@ namespace alpha_autopilot{
     rc_pub = nh.advertise<alpha_msgs::RC>("/rc_in",1);
     gpio.init();
     rcin.init();
-    event_timer = nh.createTimer(ros::Duration(0.002),&SBUSDecoder::timerEvent,this);
+    event_timer = nh.createTimer(ros::Duration(0.01),&SBUSDecoder::timerEvent,this);
   }
   void SBUSDecoder::timerEvent(const ros::TimerEvent &msg){
     rcin._timer_tick();

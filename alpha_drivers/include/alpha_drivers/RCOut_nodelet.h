@@ -15,7 +15,7 @@ namespace alpha_autopilot{
     virtual void onInit();
     ~RCOut();
     void rc_sub(const alpha_msgs::RCConstPtr msg);
-    void set_pulse(int16_t *pulse);
+    void set_pulse(int *pulse);
     Ada_ServoDriver pwm;
 
   };
