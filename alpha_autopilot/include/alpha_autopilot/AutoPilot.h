@@ -33,9 +33,9 @@ namespace alpha_autopilot{
     AlphaMode* current_mode;
     void update();
   private:
-    void rcInputCB(alpha_msgs::RC::ConstPtr msg);
+    void rcInputCB(alpha_msgs::RCConstPtr msg);
     void publishRC(std::vector<int> &rc_out);
-    void stateCB(alpha_msgs::FilteredState::ConstPtr msg);
+    void stateCB(alpha_msgs::FilteredStateConstPtr msg);
     std::vector<int> compute_auto_rc_out(float roll_effort, float pitch_effort, float throttle);
     std::vector<int> compute_manual_rc_out(std::vector<int> rc_in);
     void send_calibrate_request();

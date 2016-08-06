@@ -46,7 +46,7 @@ namespace alpha_autopilot{
     }
       have_new_data = false;
   }
-  void AHRSNodelet::imuCB(const alpha_msgs::IMU::ConstPtr msg){
+  void AHRSNodelet::imuCB(const alpha_msgs::IMUConstPtr msg){
     have_new_data = true;
     ax = msg->linear_acceleration.x;
     ay = msg->linear_acceleration.y;

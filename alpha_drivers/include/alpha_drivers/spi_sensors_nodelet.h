@@ -13,10 +13,10 @@
 
 namespace alpha_autopilot{
   class SPISensors : public nodelet::Nodelet{
-    float get_ftime();
+    double get_dtime();
 
     virtual void onInit();
-    float last_baro_time;
+    double last_baro_time;
     void updatePressure();
     void updateIMU();
     void updateSensors(const ros::TimerEvent &msg);
@@ -32,7 +32,7 @@ namespace alpha_autopilot{
     float mag[3];
 
     MS5611 barometer;
-    int barometer_state = BARO_STATE_INITIAL;
+    int barometer_state;
     float pressure;
   };
 

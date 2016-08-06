@@ -14,39 +14,40 @@ namespace alpha_autopilot{
     imu_pub = nh.advertise<alpha_msgs::IMU>("/imu",10);
     baro_pub = nh.advertise<alpha_msgs::AirPressure>("/pressure",10);
     imu.initialize();
+    barometer_state = BARO_STATE_INITIAL;
     barometer.initialize();
     
     event_timer = nh.createTimer(ros::Duration(0.01),&SPISensors::updateSensors,this);
   }
-  float SPISensors::get_ftime()
+  double SPISensors::get_dtime()
   {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     //ミリ秒を計算
-    return ((float)(tv.tv_sec)*1000 + (float)(tv.tv_usec)*0.001); //★
+    return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); //★
   }
 
   void SPISensors::updatePressure(){
     switch(barometer_state){
     case BARO_STATE_INITIAL:
       barometer.refreshPressure();
-      last_baro_time = get_ftime();
+      last_baro_time = get_dtime();
       barometer_state = BARO_STATE_WAIT_PRESSURE;
       break;
     case BARO_STATE_WAIT_PRESSURE:
-      if(get_ftime()-last_baro_time > 10){
+      if(get_dtime()-last_baro_time > 10){
 	barometer.readPressure();
 	barometer.refreshTemperature();
 	barometer_state = BARO_STATE_WAIT_TEMPERATURE;
-	last_baro_time = get_ftime();
+	last_baro_time = get_dtime();
       }
       break;
     case BARO_STATE_WAIT_TEMPERATURE:
-      if(get_ftime()-last_baro_time > 10){
+      if(get_dtime()-last_baro_time > 10){
 	barometer.readTemperature();
 	barometer.calculatePressureAndTemperature();
 	barometer.refreshPressure();
-	last_baro_time = get_ftime();
+	last_baro_time = get_dtime();
 	barometer_state = BARO_STATE_WAIT_PRESSURE;
       }
       break;
@@ -63,7 +64,6 @@ namespace alpha_autopilot{
     updatePressure();
     if(old_pressure != pressure)
       publish_baro();
-
     updateIMU();
     publish_imu();
 

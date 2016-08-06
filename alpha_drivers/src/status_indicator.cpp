@@ -19,7 +19,7 @@ double get_dtime(void)
   return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); //★
 }
 
-void calibrateCB(std_msgs::Empty::ConstPtr msg){
+void calibrateCB(std_msgs::EmptyConstPtr msg){
   calibrate_start_time = get_dtime();
   calibrating = true;
   digitalWrite(CALIBRATE_LED_PIN,0);        

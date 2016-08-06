@@ -19,10 +19,10 @@ namespace alpha_autopilot{
     ros::Subscriber calib_sub;
     virtual void onInit();
     ros::Timer eventTimer;
-    void ahrs_cb(const geometry_msgs::Quaternion::ConstPtr msg);
-    void imu_cb(const alpha_msgs::IMU::ConstPtr msg);
-    void baro_cb(const alpha_msgs::AirPressure::ConstPtr msg);
-    void calib_cb(const std_msgs::Empty::ConstPtr msg);
+    void ahrs_cb(const geometry_msgs::QuaternionConstPtr msg);
+    void imu_cb(const alpha_msgs::IMUConstPtr msg);
+    void baro_cb(const alpha_msgs::AirPressureConstPtr msg);
+    void calib_cb(const std_msgs::EmptyConstPtr msg);
     void timerEvent(const ros::TimerEvent &msg);
 
     ros::Duration calibration_duration;

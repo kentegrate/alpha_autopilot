@@ -14,7 +14,7 @@ namespace alpha_autopilot{
     ros::Subscriber sub;
     virtual void onInit();
     ~RCOut();
-    void rc_sub(const alpha_msgs::RC::ConstPtr msg);
+    void rc_sub(const alpha_msgs::RCConstPtr msg);
     void set_pulse(int16_t *pulse);
     Ada_ServoDriver pwm;
 

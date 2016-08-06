@@ -24,7 +24,7 @@ float az_offset=9.8;
 float az_sum;
 int az_count;
 ros::Time calibrate_start_time;
-void ahrs_cb(const geometry_msgs::Quaternion::ConstPtr msg){
+void ahrs_cb(const geometry_msgs::QuaternionConstPtr msg){
   alpha_msgs::FilteredState pose;
   float q0 = msg->w;
   float q1 = msg->x;
@@ -41,7 +41,7 @@ void ahrs_cb(const geometry_msgs::Quaternion::ConstPtr msg){
   pose_pub.publish(pose);
 }
 
-void imu_cb(const alpha_msgs::IMU::ConstPtr msg){
+void imu_cb(const alpha_msgs::IMUConstPtr msg){
   float q_norm = sqrt(q_raw.w*q_raw.w+q_raw.x*q_raw.x+q_raw.y*q_raw.y+q_raw.z*q_raw.z);
   //normalize q
   q_raw.w /= q_norm;
@@ -68,7 +68,7 @@ void imu_cb(const alpha_msgs::IMU::ConstPtr msg){
     az_sum += raw_az;
   }
 }
-void baro_cb(const alpha_msgs::AirPressure::ConstPtr msg){
+void baro_cb(const alpha_msgs::AirPressureConstPtr msg){
 
   float baro_raw = msg->pressure;
 
@@ -84,7 +84,7 @@ void baro_cb(const alpha_msgs::AirPressure::ConstPtr msg){
     baro_raw_pub.publish(msg);
   }
 }
-void calib_cb(const std_msgs::Empty::ConstPtr msg){
+void calib_cb(const std_msgs::EmptyConstPtr msg){
   calibrate = true;
   calibrate_start_time = ros::Time::now();
   baro_count = 0;

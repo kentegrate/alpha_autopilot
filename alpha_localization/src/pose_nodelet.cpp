@@ -28,7 +28,7 @@ namespace alpha_autopilot{
     q_raw.w = 0;
   }
 
-  void PoseNodelet::ahrs_cb(const geometry_msgs::Quaternion::ConstPtr msg){
+  void PoseNodelet::ahrs_cb(const geometry_msgs::QuaternionConstPtr msg){
     alpha_msgs::FilteredStatePtr pose(new alpha_msgs::FilteredState);
     float q0 = msg->w;
     float q1 = msg->x;
@@ -43,7 +43,7 @@ namespace alpha_autopilot{
     pose->yaw = atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3));
     pose_pub.publish(pose);
   }
-  void PoseNodelet::imu_cb(const alpha_msgs::IMU::ConstPtr msg){
+  void PoseNodelet::imu_cb(const alpha_msgs::IMUConstPtr msg){
     float q_norm = sqrt(q_raw.w*q_raw.w+q_raw.x*q_raw.x+q_raw.y*q_raw.y+q_raw.z*q_raw.z);
     //normalize q
     q_raw.w /= q_norm;
@@ -71,7 +71,7 @@ namespace alpha_autopilot{
     }
   }
 
-  void PoseNodelet::baro_cb(const alpha_msgs::AirPressure::ConstPtr msg){
+  void PoseNodelet::baro_cb(const alpha_msgs::AirPressureConstPtr msg){
 
     float baro_raw = msg->pressure;
 
@@ -83,7 +83,7 @@ namespace alpha_autopilot{
       baro_altitude = ((pow(p0/baro_raw,1/5.257)-1)*(temp+273.15))/0.0065-zero_altitude;
 
   }
-  void PoseNodelet::calib_cb(const std_msgs::Empty::ConstPtr msg){
+  void PoseNodelet::calib_cb(const std_msgs::EmptyConstPtr msg){
     calibrating = true;
     calibration_start_time = ros::Time::now();
     baro_count = 0;

@@ -11,13 +11,13 @@ void SensorRemapper::init(){
 
 }
 
-void SensorRemapper::imu_CB(sensor_msgs::Imu::ConstPtr msg){
+void SensorRemapper::imu_CB(sensor_msgs::ImuConstPtr msg){
   imu_raw = *msg;
 }
-void SensorRemapper::mag_CB(geometry_msgs::Vector3Stamped::ConstPtr msg){
+void SensorRemapper::mag_CB(geometry_msgs::Vector3StampedConstPtr msg){
   mag_raw = msg->vector;
 }
-void SensorRemapper::baro_CB(geometry_msgs::PointStamped::ConstPtr msg){
+void SensorRemapper::baro_CB(geometry_msgs::PointStampedConstPtr msg){
   baro_raw = msg->point.z;
 }
 

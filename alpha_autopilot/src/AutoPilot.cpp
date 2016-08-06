@@ -94,7 +94,7 @@ namespace alpha_autopilot{
     state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
     calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
   }
-  void AutoPilot::stateCB(alpha_msgs::FilteredState::ConstPtr msg){
+  void AutoPilot::stateCB(alpha_msgs::FilteredStateConstPtr msg){
 
     state.pos.x = msg->x;
     state.pos.y = msg->y;
@@ -103,7 +103,7 @@ namespace alpha_autopilot{
     state.rot.y = msg->pitch;
     state.rot.z = msg->yaw;
   }
-  void AutoPilot::rcInputCB(alpha_msgs::RC::ConstPtr msg){
+  void AutoPilot::rcInputCB(alpha_msgs::RCConstPtr msg){
     if(msg->Channel.size() < 8)
       return;
     for(int i = 0; i < 8; i++){

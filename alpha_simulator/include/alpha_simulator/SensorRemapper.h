@@ -24,9 +24,9 @@ class SensorRemapper{
  public:
   void init();
 
-  void imu_CB(sensor_msgs::Imu::ConstPtr msg);
-  void mag_CB(geometry_msgs::Vector3Stamped::ConstPtr msg);
-  void baro_CB(geometry_msgs::PointStamped::ConstPtr msg);
+  void imu_CB(sensor_msgs::ImuConstPtr msg);
+  void mag_CB(geometry_msgs::Vector3StampedConstPtr msg);
+  void baro_CB(geometry_msgs::PointStampedConstPtr msg);
 
   void publish_imu();
   void publish_baro();

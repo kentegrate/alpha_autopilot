@@ -9,7 +9,7 @@
 bool have_new_data = false;
 float gx,gy,gz,ax,ay,az,mx,my,mz;
 
-void imu_cb(const alpha_msgs::IMU::ConstPtr msg){
+void imu_cb(const alpha_msgs::IMUConstPtr msg){
   have_new_data = true;
   ax = msg->linear_acceleration.x;
   ay = msg->linear_acceleration.y;

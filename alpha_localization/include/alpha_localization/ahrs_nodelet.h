@@ -13,7 +13,7 @@ namespace alpha_autopilot{
 
     virtual void onInit();
 
-    void imuCB(const alpha_msgs::IMU::ConstPtr msg);
+    void imuCB(const alpha_msgs::IMUConstPtr msg);
 
     Ahrs ahrs;
     int calibration_counter;
