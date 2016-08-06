@@ -15,12 +15,12 @@ class AltitudeEstimator{
   
   void init();
 
-  float update(const geometry_msgs::QuaternionConstPtr orientation,const alpha_msgs::IMUConstPtr imu, const alpha_msgs::AirPressureConstPtr pressure);
+  float update(geometry_msgs::Quaternion &orientation,alpha_msgs::IMU &imu, alpha_msgs::AirPressure &pressure);
 
  private:
 
   void calib_cb(const std_msgs::EmptyConstPtr msg);
-  float getWorldZAccel(const geometry_msgs::QuaternionConstPtr orientation, const alpha_msgs::IMUConstPtr imu);
+  float getWorldZAccel(geometry_msgs::Quaternion &orientation, alpha_msgs::IMU &imu);
 
   ros::Subscriber calib_sub;
   ros::NodeHandle nh;

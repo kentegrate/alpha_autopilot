@@ -7,6 +7,7 @@
 
 #include <alpha_msgs/IMU.h>
 #include <alpha_msgs/AirPressure.h>
+#include <alpha_msgs/FilteredState.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
 
@@ -67,7 +68,7 @@ int main(int argc, char* argv[]){
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
 
   AltitudeEstimator altitude_est;
-  altitude.init();
+  altitude_est.init();
 
   MPU9250 imu;
   imu.initialize();
@@ -111,10 +112,20 @@ int main(int argc, char* argv[]){
     quat_msg.w = (double)ahrs.q0;
     
     float z = altitude_est.update(quat_msg,imu_msg,baro_msg);
-    
+    alpha_msgs::FilteredState pose_msg;
+    pose_msg.z = z;
+    float q0 = quat_msg.w;
+    float q1 = quat_msg.x;
+    float q2 = quat_msg.y;
+    float q3 = quat_msg.z;
+    pose_msg.roll = atan2(2*(q0*q1+q2*q3),1-2*(q1*q1+q2*q2));
+    pose_msg.pitch = asin(2*(q0*q2-q3*q1));
+    pose_msg.yaw = atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3));
+
+    pose_pub.publish(pose_msg);
     
     rate.sleep();
-
+    ros::spinOnce();
   }
   return 0;
 }

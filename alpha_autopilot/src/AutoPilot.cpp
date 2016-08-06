@@ -9,7 +9,7 @@ AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_z("z"),trim(8,0
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
 
-  if(wiringPiSetupGpio() == -1) return 1;
+  wiringPiSetupGpio();
 
   pinMode(27,OUTPUT);
   digitalWrite(27,0);
@@ -101,7 +101,6 @@ std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
 }
 
 void AutoPilot::init(){
-  rc_sub = nh.subscribe("/rc_in",10,&AutoPilot::rcInputCB,this);
   state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
   calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
 }
@@ -114,12 +113,8 @@ void AutoPilot::stateCB(alpha_msgs::FilteredState::ConstPtr msg){
   state.rot.y = msg->pitch;
   state.rot.z = msg->yaw;
 }
-void AutoPilot::rcInputCB(alpha_msgs::RC::ConstPtr msg){
-  if(msg->Channel.size() < 8)
-    return;
-  for(int i = 0; i < 8; i++){
-    rc_in[i] = msg->Channel[i];
-  }
+void AutoPilot::setRCIn(std::vector<int> &rc_in){
+
   AlphaCommand cmd(rc_in);
   current_mode = cmd.getMode(current_mode,state);
 

@@ -1,3 +1,5 @@
+#ifndef ALPHA_DRIVERS_PCA9685_H
+#define ALPHA_DRIVERS_PCA9685_H
 /*source from here
   http://junkroom2cyberrobotics.blogspot.jp/2013/06/raspberry-pi-adafruit-i2c-16-channel.html*/
 
@@ -46,3 +48,4 @@ class Ada_ServoDriver
   uint8_t _i2cAddr;
   int _i2c;
 };
+#endif //ALPHA_DRIVERS_PCA9685_H

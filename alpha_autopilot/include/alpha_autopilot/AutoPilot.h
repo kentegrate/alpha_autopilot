@@ -34,9 +34,10 @@ class AutoPilot{
   void init();
   AlphaMode* current_mode;
   void update();
+  void setRCIn(std::vector<int> &rc_in);
  private:
-  void rcInputCB(alpha_msgs::RC::ConstPtr msg);
-  void publishRC(std::vector<int> &rc_out);
+
+  void setRCOut(std::vector<int> &rc_out);
   void stateCB(alpha_msgs::FilteredState::ConstPtr msg);
   std::vector<int> compute_auto_rc_out(float roll_effort, float pitch_effort, float throttle);
   std::vector<int> compute_manual_rc_out(std::vector<int> rc_in);

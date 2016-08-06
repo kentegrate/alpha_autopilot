@@ -84,7 +84,7 @@ find_package(OpenCV 2.4.8 REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES PCA9685
+  LIBRARIES PCA9685 sbus_decoder
 #  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
@@ -153,10 +153,10 @@ target_link_libraries(PCA9685
 #  ${catkin_LIBRARIES}
 #  ms5611
 #)
-add_executable (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
+add_library (sbus_decoder src/decoder/GPIO_RPI.cpp src/decoder/RCInput_RPI.cpp
                              src/decoder/sbus.cpp
-			     src/decoder/RCInput.cpp
-			     src/decoder/main.cpp)
+			     src/decoder/RCInput.cpp)
+			    
 			   # src/decoder/Scheduler.cpp src/decoder/Thread.cpp
 target_link_libraries(sbus_decoder
   ${catkin_LIBRARIES}
@@ -168,7 +168,7 @@ target_link_libraries(ahrs
   ${catkin_LIBRARIES}
 )
 
-add_executable(spi_sensors src/spi_sensors.cpp)
+add_executable(spi_sensors src/spi_sensors.cpp src/altitude_estimator.cpp) 
 target_link_libraries(spi_sensors
   ${catkin_LIBRARIES}
   mpu9250

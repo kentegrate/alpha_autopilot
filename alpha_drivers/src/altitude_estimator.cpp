@@ -1,3 +1,5 @@
+#include <alpha_drivers/altitude_estimator.h>
+
 void AltitudeEstimator::init(){
     
   calib_sub = nh.subscribe("/calibrate",1,&AltitudeEstimator::calib_cb,this);
@@ -25,9 +27,9 @@ void AltitudeEstimator::calib_cb(const std_msgs::EmptyConstPtr msg){
   az_sum =  0;
   az_count = 0;
 }
-float AltitudeEstimator::getWorldZAccel(const geometry_msgs::QuaternionConstPtr orientation, const alpha_msgs::IMUConstPtr imu){
+float AltitudeEstimator::getWorldZAccel(geometry_msgs::Quaternion &orientation, alpha_msgs::IMU &imu){
   //imu process
-  geometry_msgs::Quaternion &q_raw = (*orientation);
+  geometry_msgs::Quaternion &q_raw = orientation;
   float q_norm = sqrt(q_raw.w*q_raw.w+q_raw.x*q_raw.x+q_raw.y*q_raw.y+q_raw.z*q_raw.z);
   //normalize q
   q_raw.w /= q_norm;
@@ -40,24 +42,24 @@ float AltitudeEstimator::getWorldZAccel(const geometry_msgs::QuaternionConstPtr 
   q_inv.y = -q_raw.y;
   q_inv.z = -q_raw.z;
   geometry_msgs::Quaternion &q = q_inv;
-  float ax = imu->linear_acceleration.x;
-  float ay = imu->linear_acceleration.y;
-  float az = imu->linear_acceleration.z;
-  float az = 
+  float ax = imu.linear_acceleration.x;
+  float ay = imu.linear_acceleration.y;
+  float az = imu.linear_acceleration.z;
+  float raw_az = 
     2*(q.x*q.z+q.w*q.y)*ax +
     2*(q.y*q.z-q.w*q.x)*ay +
     (1-2*q.x*q.x-2*q.y*q.y)*az;
-  return az;
+  return raw_az;
 }
 
-float AltitudeEstimator::update(const geometry_msgs::QuaternionConstPtr orientation,const alpha_msgs::IMUConstPtr imu, const alpha_msgs::AirPressureConstPtr pressure){
+float AltitudeEstimator::update(geometry_msgs::Quaternion &orientation,alpha_msgs::IMU &imu, alpha_msgs::AirPressure &pressure){
 
-  float baro_raw = pressure->pressure;
+  float baro_raw = pressure.pressure;
   float az = getWorldZAccel(orientation,imu);
   if(calibrating){
 
     az_count ++;
-    az_sum += raw_az;
+    az_sum += az;
 
     baro_count ++;
     baro_sum += baro_raw;

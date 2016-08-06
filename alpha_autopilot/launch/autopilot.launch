@@ -2,7 +2,7 @@
 <launch>
 	<include file="$(find alpha_drivers)/launch/drivers.launch"/>
 
-	<node pkg="alpha_localization" name="simple_pose_node" type="simple_pose_node" respawn="true" output="screen"/>
+	<!--node pkg="alpha_localization" name="simple_pose_node" type="simple_pose_node" respawn="true" output="screen"/-->
 
 	<node pkg="alpha_autopilot" name="autopilot_node" type="alpha_autopilot_node" respawn="true" output="screen">
 	  <param name="roll/Kp" type="double" value="58.0"/>

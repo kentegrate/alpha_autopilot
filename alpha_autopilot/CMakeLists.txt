@@ -145,15 +145,17 @@ add_dependencies(PID ${alpha_msgs_EXPORTED_TARGETS} alpha_autopilot_gencfg)
 
  target_link_libraries(alpha_autopilot_node
    ${catkin_LIBRARIES}
-  PID
+   PID
+   wiringPi
+   sbus_decoder
  )
  add_dependencies(alpha_autopilot_node ${alpha_msgs_EXPORTED_TARGETS})
 
- add_executable(PID_sample src/PID_sample.cpp)
- target_link_libraries(PID_sample
-   ${catkin_LIBRARIES}
-   PID
- )
+# add_executable(PID_sample src/PID_sample.cpp)
+# target_link_libraries(PID_sample
+#   ${catkin_LIBRARIES}
+#   PID
+# )
 
 
 

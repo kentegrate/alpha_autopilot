@@ -1,6 +1,6 @@
 <launch>
 	<node pkg="alpha_drivers" name="spi_sensors" type="spi_sensors" respawn="true"/>
-	<node pkg="alpha_drivers" name="sbus_decoder" type="sbus_decoder" respawn="true"/>
+	<!--node pkg="alpha_drivers" name="sbus_decoder" type="sbus_decoder" respawn="true"/-->
 	<!--node pkg="alpha_drivers" name="rcout_node" type="rcout_node" respawn="true"/-->
 	<!--node pkg="alpha_drivers" name="camera_node" type="camera_node" respawn="true"/-->
 	<node pkg="alpha_drivers" name="indicator_node" type="indicator_node"/>
