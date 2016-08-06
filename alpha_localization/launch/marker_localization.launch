@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="alpha_localization" name="marker_localization" type="marker_localization" output="screen">
+    <rosparam command="load" file="$(find alpha_localization)/config/CameraParameters.yaml"/>
+    <rosparam command="load" file="$(find alpha_localization)/config/MarkerCorners.yaml"/>
+  </node>
+  
+
+</launch>

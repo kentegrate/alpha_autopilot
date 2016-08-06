@@ -22,6 +22,7 @@ class AutoPilot{
   ros::Subscriber rc_sub;
   ros::NodeHandle nh;
   ros::Publisher calibrate_pub;
+  ros::Publisher rcout_pub;
   ros::Subscriber state_sub;
   
   AlphaState state;

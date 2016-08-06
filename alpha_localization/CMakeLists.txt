@@ -161,12 +161,11 @@ include_directories(
 #)
 
 
-add_executable(test_detection src/test_detection.cpp)
+add_executable(marker_localization src/marker_localization_node.cpp src/MarkerLocalization.cpp)
 
-target_link_libraries(test_detection
+target_link_libraries(marker_localization
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
-  
 )
 
 #add_library(ahrs src/ahrs.cpp)
@@ -180,12 +179,6 @@ target_link_libraries(test_detection
 #  ${catkin_LIBRARIES}
 #)
 #add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
-
-add_executable(simple_pose_node src/simple_pose.cpp)
-target_link_libraries(simple_pose_node
-  ${catkin_LIBRARIES}
-)
-add_dependencies(simple_pose_node ${alpha_msgs_EXPORTED_TARGETS})
 
 
 #############

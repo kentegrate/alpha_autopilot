@@ -103,6 +103,7 @@ std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
 void AutoPilot::init(){
   state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
   calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
+  rcout_pub = nh.advertise<alpha_msgs::RC>("/rc_out",10);
 }
 void AutoPilot::stateCB(alpha_msgs::FilteredState::ConstPtr msg){
 
@@ -120,8 +121,12 @@ void AutoPilot::setRCIn(std::vector<int> &rc_in){
 
 }
 void AutoPilot::setRCOut(std::vector<int> &rc_out){
-  for(int i = 0; i < 8; i++)
+  alpha_msgs::RC msg;
+  for(int i = 0; i < 8; i++){
     pwm.setServoPulse(i+3,rc_out[i]);
+    msg.Channel.push_back(rc_out[i]);
+  }
+  rcout_pub.publish(msg);
   //  nh.setParam("/rc_out",rc_out);
 }
 void AutoPilot::send_calibrate_request(){
