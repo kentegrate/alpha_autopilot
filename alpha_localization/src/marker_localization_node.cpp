@@ -14,6 +14,9 @@ int main(int argc, char* argv[]){
   ml.loadMarkerPosition();
   ml.loadCameraInfo();
 
+  namedWindow("detection_result");
+  startWindowThread();
+
 
   while(input.grab() && ros::ok()){
     input.retrieve(image);
@@ -23,6 +26,10 @@ int main(int argc, char* argv[]){
       continue;
     
     Pose pose;
+    ml.sortCorners(corners);
+    for(int i = 0; i < corners.size(); i++)
+      std::cout<<corners[i]<<std::endl;
+
     pose = ml.solvePose(corners);
     alpha_msgs::FilteredState msg;
     msg.x = pose.pos.x;

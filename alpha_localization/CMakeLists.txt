@@ -168,6 +168,13 @@ target_link_libraries(marker_localization
   ${OpenCV_LIBRARIES}
 )
 
+add_executable(test_detection src/test_detection.cpp)
+
+target_link_libraries(test_detection
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
 #add_library(ahrs src/ahrs.cpp)
 #target_link_libraries(ahrs
 #  ${catkin_LIBRARIES}

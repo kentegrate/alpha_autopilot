@@ -42,7 +42,8 @@ class MarkerLocalization{
   void getCVCorners(Mat &input, std::vector<Point2f> &corners);
   void loadCameraInfo();
   Pose solvePose(std::vector<Point2f> &corners);
-
+  void sortCorners(std::vector<Point2f> &corners);
+  void sort_helper(std::vector<Point2f> &sorting, std::pair<float,float> pt1, std::pair<float,float> pt2, bool reverse);
 
 
 

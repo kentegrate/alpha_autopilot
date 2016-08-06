@@ -1,7 +1,7 @@
 #include <alpha_localization/MarkerLocalization.h>
 #include <sstream>
 #include <string>
-
+#include <map>
 MarkerLocalization::MarkerLocalization(){
 
 }
@@ -18,13 +18,14 @@ void MarkerLocalization::loadMarkerPosition(){
     private_nh.getParam(point_name,corner);
     marker_corners.push_back(corner);
   }
-   std::cout<<marker_corners[0].size()<<std::endl;
-  for(int i = 0; i < 8; i++){
+  //   std::cout<<marker_corners[0].size()<<std::endl;
+   for(int i = 0; i < 8; i++){
     Point3f point((float)(-marker_corners[i][1]),
 		  (float)(-marker_corners[i][2]),
 		  (float)(marker_corners[i][0]));
     objectPoints.push_back(point);
-  }
+    }
+
 }
 void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners){
   Mat gray;
@@ -32,7 +33,7 @@ void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners)
   Mat thresh_img,thresh_img2;
 
   threshold(gray, thresh_img, 100, 255, THRESH_BINARY);
-
+  imshow("detection_result",thresh_img);
   //  output = Mat::zeros(thresh_img.rows, thresh_img.cols, CV_8UC3);
   std::vector<std::vector<Point> > contours,filtered;
   std::vector<Vec4i> hierarchy;
@@ -59,7 +60,7 @@ void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners)
     
     int j = hierarchy[i][2];
     while(j!=-1){
-      if(area[j] < area[i] *0.9 && area[j] > area[i]*0.1 && area[j] > 25 ){
+      if(area[j] < area[i] *0.2 && area[j] > area[i]*0.05 && area[j] > 25 ){
 	Moments m_i = moments(contours[i]);
 	Moments m_j = moments(contours[j]);
 	if(pow(m_i.m10/m_i.m00 - m_j.m10/m_j.m00, 2)+
@@ -115,22 +116,66 @@ void MarkerLocalization::loadCameraInfo(){
 
 }
 
+void MarkerLocalization::sortCorners(std::vector<Point2f> &corners){
+  if(corners.size()!=8)
+    return;
+  std::vector<std::pair<float,float> > x_sorted_points;
+  for(int i = 0; i < corners.size(); i++)
+    x_sorted_points.push_back(std::make_pair(corners[i].x,corners[i].y));
+
+  std::sort(x_sorted_points.begin(),x_sorted_points.end());
+
+  std::vector<Point2f> sorted_corners;
+  
+  sort_helper(sorted_corners,x_sorted_points[0],x_sorted_points[1],true);
+  sort_helper(sorted_corners,x_sorted_points[6],x_sorted_points[7],false);
+  sort_helper(sorted_corners,x_sorted_points[2],x_sorted_points[3],true);
+  sort_helper(sorted_corners,x_sorted_points[4],x_sorted_points[5],false);  
+  corners = sorted_corners;
+
+}
+void MarkerLocalization::sort_helper(std::vector<Point2f> &sorting, std::pair<float,float> pt1, std::pair<float,float> pt2, bool reverse){
+  std::vector<std::pair<float,float> > adding_points;
+  adding_points.push_back(pt1);
+  adding_points.push_back(pt2);
+
+  float y1 = pt1.second;
+  float y2 = pt2.second;    
+
+  if(((y1 > y2 )&&(!reverse)) || ((y1 < y2)&&(reverse)))
+    std::swap(adding_points[0],adding_points[1]);
+
+  for(int i = 0; i < 2; i++)
+    sorting.push_back(Point2f(adding_points[i].first,adding_points[i].second));
+
+}
+
 Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   Pose pose;
   
   Mat rvec,tvec,R,R_t;
+  std::cout<<"cam mat "<<camMatrix<<std::endl;
+  
+  for(int i = 0; i < objectPoints.size(); i++){
+    std::cout<<objectPoints[i]<<std::endl;
+  }
   solvePnP(objectPoints,corners,camMatrix,distCoeffs,rvec,tvec);
-  cv::Rodrigues(rvec,R);
+  std::vector<Point2f> imagePoints;
+  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
+  for(int i = 0; i < imagePoints.size(); i++)
+    std::cout<<imagePoints[i]<<std::endl;
+    cv::Rodrigues(rvec,R);
   cv::transpose(R,R_t);
   tvec = -R_t*tvec;
   cv::Rodrigues(R_t,rvec);
-  pose.rot.x = rvec.at<float>(2,0);
-  pose.rot.y =-rvec.at<float>(0,0);
-  pose.rot.z =-rvec.at<float>(1,0);
+
+  pose.rot.x = rvec.at<double>(2,0);
+  pose.rot.y =-rvec.at<double>(0,0);
+  pose.rot.z =-rvec.at<double>(1,0);
   
-  pose.pos.x = tvec.at<float>(2,0);
-  pose.pos.y =-tvec.at<float>(0,0);
-  pose.pos.z =-tvec.at<float>(1,0);
+  pose.pos.x = tvec.at<double>(2,0);
+  pose.pos.y =-tvec.at<double>(0,0);
+  pose.pos.z =-tvec.at<double>(1,0);
   
   return pose;
 }

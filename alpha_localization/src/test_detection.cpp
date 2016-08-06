@@ -120,8 +120,9 @@ void process(Mat &input, Mat &output){
 
   Mat rvec,tvec;
   solvePnP(objectPoints, corners, camMatrix, distCoeffs, rvec, tvec);
- //  std::cout<<rvec<<std::endl;
-  std::cout<<tvec<<std::endl;
+  std::cout<<rvec<<std::endl;
+
+  //  std::cout<<tvec<<std::endl;
   }
   std::cout<<"computation time "<<get_dtime()-start<<std::endl;
 }
