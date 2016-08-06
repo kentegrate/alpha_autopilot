@@ -3,6 +3,9 @@
 #include <wiringPi.h>
 
 namespace alpha_autopilot{
+  RCOut::~RCOut(){
+    digitalWrite(27,1);//enable pwm output
+  }
   void RCOut::onInit(){
     ros::NodeHandle &nh = getNodeHandle();
     sub = nh.subscribe("/rc_out",1,&RCOut::rc_sub,this);
