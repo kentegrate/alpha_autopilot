@@ -3,6 +3,7 @@
 #include <alpha_drivers/ms5611.h>
 #include <alpha_drivers/mpu9250.h>
 #include <alpha_drivers/ahrs.h>
+#include <alpha_drivers/altitude_estimator.h>
 
 #include <alpha_msgs/IMU.h>
 #include <alpha_msgs/AirPressure.h>
@@ -62,13 +63,20 @@ int main(int argc, char* argv[]){
 
   ros::Publisher imu_pub = nh.advertise<alpha_msgs::IMU>("/imu",10);
   ros::Publisher baro_pub = nh.advertise<alpha_msgs::AirPressure>("/pressure",10);
-  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
+  //  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
+  ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
+
+  AltitudeEstimator altitude_est;
+  altitude.init();
+
   MPU9250 imu;
   imu.initialize();
+
   Ahrs ahrs(100,0.5,0.001);
   int barometer_state = STATE_INITIAL;
   MS5611 barometer;
   barometer.initialize();
+
 
   ros::Rate rate(100);
   float accel[3];
@@ -77,11 +85,10 @@ int main(int argc, char* argv[]){
   float pressure;
   while(ros::ok()){
     
-    if(updatePressure(barometer_state,barometer,pressure)){
-      alpha_msgs::AirPressure baro_msg;
-      baro_msg.pressure = pressure;
-      baro_pub.publish(baro_msg);
-    }
+    updatePressure(barometer_state,barometer,pressure);
+    alpha_msgs::AirPressure baro_msg;
+    baro_msg.pressure = pressure;
+    baro_pub.publish(baro_msg);
     
     imu.getMotion9(&accel[0],&accel[1],&accel[2],
 		   &gyro[0],&gyro[1],&gyro[2],
@@ -97,13 +104,15 @@ int main(int argc, char* argv[]){
 			    accel[0],accel[1],accel[2],
 			    mag[1],mag[0],-mag[2]);
 
-    geometry_msgs::Quaternion msg;
-    msg.x = (double)ahrs.q1;
-    msg.y = (double)ahrs.q2;
-    msg.z = (double)ahrs.q3;
-    msg.w = (double)ahrs.q0;
-    ahrs_pub.publish(msg);
-
+    geometry_msgs::Quaternion quat_msg;
+    quat_msg.x = (double)ahrs.q1;
+    quat_msg.y = (double)ahrs.q2;
+    quat_msg.z = (double)ahrs.q3;
+    quat_msg.w = (double)ahrs.q0;
+    
+    float z = altitude_est.update(quat_msg,imu_msg,baro_msg);
+    
+    
     rate.sleep();
 
   }

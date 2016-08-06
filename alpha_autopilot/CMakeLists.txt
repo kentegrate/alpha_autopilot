@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   dynamic_reconfigure
   std_msgs
+  alpha_drivers
 )
 
 ## System dependencies are found with CMake's conventions

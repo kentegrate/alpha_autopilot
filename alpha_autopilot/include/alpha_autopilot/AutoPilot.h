@@ -8,6 +8,8 @@
 #include <std_msgs/Empty.h>
 #include <ros/ros.h>
 #include <vector>
+#include <alpha_drivers/PCA9685.h>
+
 class AutoPilot{
  private:
   PID pid_roll;
@@ -19,11 +21,12 @@ class AutoPilot{
   
   ros::Subscriber rc_sub;
   ros::NodeHandle nh;
-  ros::Publisher rc_pub;
   ros::Publisher calibrate_pub;
   ros::Subscriber state_sub;
   
   AlphaState state;
+
+  Ada_ServoDriver pwm;
 
  public:
   AutoPilot();

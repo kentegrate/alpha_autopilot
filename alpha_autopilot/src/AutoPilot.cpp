@@ -1,4 +1,6 @@
 #include <alpha_autopilot/AutoPilot.h>
+#include <wiringPi.h>
+#include <alpha_drivers/PCA9685.h>
 
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_z("z"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
@@ -6,6 +8,17 @@ AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_z("z"),trim(8,0
   trim[ELEVATOR_CH] = 1500;
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
+
+  if(wiringPiSetupGpio() == -1) return 1;
+
+  pinMode(27,OUTPUT);
+  digitalWrite(27,0);
+  
+  pwm.init();
+  pwm.reset();
+  usleep(100000);
+  pwm.setPWMFreq(60);
+  
 }
 AutoPilot::~AutoPilot(){
   delete current_mode;
@@ -70,7 +83,8 @@ void AutoPilot::update(){
 	    
   }
 
-  publishRC(rc_out);
+  setRCOut(rc_out);
+  
 }
 std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_effort,float throttle){
   std::vector<int> rc_out = trim;
@@ -88,7 +102,6 @@ std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
 
 void AutoPilot::init(){
   rc_sub = nh.subscribe("/rc_in",10,&AutoPilot::rcInputCB,this);
-  rc_pub = nh.advertise<alpha_msgs::RC>("/rc_out",10);
   state_sub = nh.subscribe("/pose",10,&AutoPilot::stateCB,this);
   calibrate_pub = nh.advertise<std_msgs::Empty>("/calibrate",10);
 }
@@ -111,12 +124,9 @@ void AutoPilot::rcInputCB(alpha_msgs::RC::ConstPtr msg){
   current_mode = cmd.getMode(current_mode,state);
 
 }
-void AutoPilot::publishRC(std::vector<int> &rc_out){
-  alpha_msgs::RC msg;
-  for(int i = 0; i < rc_out.size(); i++){
-    msg.Channel.push_back(rc_out[i]);
-  }
-  rc_pub.publish(msg);
+void AutoPilot::setRCOut(std::vector<int> &rc_out){
+  for(int i = 0; i < 8; i++)
+    pwm.setServoPulse(i+3,rc_out[i]);
   //  nh.setParam("/rc_out",rc_out);
 }
 void AutoPilot::send_calibrate_request(){

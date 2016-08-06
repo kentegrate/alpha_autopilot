@@ -83,8 +83,8 @@ find_package(OpenCV 2.4.8 REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES alpha_drivers
+  INCLUDE_DIRS include
+  LIBRARIES PCA9685
 #  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
@@ -129,14 +129,15 @@ target_link_libraries(mpu9250
 )
 
 
-add_library(pca9685 src/pca9685.cpp)
-target_link_libraries(pca9685
-  ${catkin_LIBRARIES}
-  bcm2835
-)
+
+#add_library(pca9685 src/pca9685.cpp)
+#target_link_libraries(pca9685
+#  ${catkin_LIBRARIES}
+#  bcm2835
+#)
 
 
-add_library(PCA9685 src/PCA9685.cpp)
+add_library(PCA9685 SHARED src/PCA9685.cpp)
 target_link_libraries(PCA9685
   ${catkin_LIBRARIES}
 )
@@ -176,13 +177,13 @@ target_link_libraries(spi_sensors
   )
 add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
 
-add_executable(rcout_node src/RCOut_node.cpp)
-target_link_libraries(rcout_node
-  ${catkin_LIBRARIES}
-  PCA9685
-  wiringPi
-  )
-add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
+#add_executable(rcout_node src/RCOut_node.cpp)
+#target_link_libraries(rcout_node
+#  ${catkin_LIBRARIES}
+#  PCA9685
+#  wiringPi
+#  )
+#add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
 
 add_executable(camera_node src/raspi_camera.cpp)
 target_link_libraries(camera_node
