@@ -2,6 +2,7 @@
 #include <ros/ros.h>
 #include <alpha_drivers/ms5611.h>
 #include <alpha_drivers/mpu9250.h>
+#include <alpha_drivers/ahrs.h>
 
 #include <alpha_msgs/IMU.h>
 #include <alpha_msgs/AirPressure.h>
@@ -60,9 +61,10 @@ int main(int argc, char* argv[]){
 
   ros::Publisher imu_pub = nh.advertise<alpha_msgs::IMU>("/imu",10);
   ros::Publisher baro_pub = nh.advertise<alpha_msgs::AirPressure>("/pressure",10);
-
+  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
   MPU9250 imu;
   imu.initialize();
+  Ahrs ahrs(100,0.5,0.001);
   int barometer_state = STATE_INITIAL;
   MS5611 barometer;
   barometer.initialize();
@@ -89,6 +91,18 @@ int main(int argc, char* argv[]){
     imu_msg.magnetic_field      = float2VectorMsg(mag);
 
     imu_pub.publish(imu_msg);
+
+    ahrs.MadgwickAHRSupdate(gyro[0],gyro[1],gyro[2],
+			    accel[0],accel[1],accel[2],
+			    mag[1],mag[0],-mag[2]);
+
+    geometry_msgs::Quaternion msg;
+    msg.x = (double)ahrs.q1;
+    msg.y = (double)ahrs.q2;
+    msg.z = (double)ahrs.q3;
+    msg.w = (double)ahrs.q0;
+    ahrs_pub.publish(msg);
+
     rate.sleep();
 
   }

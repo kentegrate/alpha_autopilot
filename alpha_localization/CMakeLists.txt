@@ -169,17 +169,17 @@ target_link_libraries(test_detection
   
 )
 
-add_library(ahrs src/ahrs.cpp)
-target_link_libraries(ahrs
-  ${catkin_LIBRARIES}
-)
+#add_library(ahrs src/ahrs.cpp)
+#target_link_libraries(ahrs
+#  ${catkin_LIBRARIES}
+#)
 
-add_executable(ahrs_node src/ahrs_node.cpp)
-target_link_libraries(ahrs_node
-  ahrs
-  ${catkin_LIBRARIES}
-)
-add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
+#add_executable(ahrs_node src/ahrs_node.cpp)
+#target_link_libraries(ahrs_node
+#  ahrs
+#  ${catkin_LIBRARIES}
+#)
+#add_dependencies(ahrs_node ${alpha_msgs_EXPORTED_TARGETS})
 
 add_executable(simple_pose_node src/simple_pose.cpp)
 target_link_libraries(simple_pose_node

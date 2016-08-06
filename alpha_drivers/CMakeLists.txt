@@ -162,11 +162,17 @@ target_link_libraries(sbus_decoder
 )
 add_dependencies(sbus_decoder ${alpha_msgs_EXPORTED_TARGETS})
 
+add_library(ahrs src/ahrs.cpp)
+target_link_libraries(ahrs
+  ${catkin_LIBRARIES}
+)
+
 add_executable(spi_sensors src/spi_sensors.cpp)
 target_link_libraries(spi_sensors
   ${catkin_LIBRARIES}
   mpu9250
   ms5611
+  ahrs
   )
 add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
 
