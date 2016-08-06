@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <alpha_autopilot/DynamicPIDConfig.h>
+#include <alpha_msgs/DynamicPIDConfig.h>
 #include <dynamic_reconfigure/server.h>
 class PID{
  public:
