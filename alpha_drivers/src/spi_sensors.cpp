@@ -7,6 +7,7 @@
 #include <alpha_msgs/IMU.h>
 #include <alpha_msgs/AirPressure.h>
 #include <geometry_msgs/Vector3.h>
+#include <geometry_msgs/Quaternion.h>
 
 #define STATE_INITIAL 1
 #define STATE_WAIT_PRESSURE 2
