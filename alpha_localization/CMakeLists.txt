@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_localization)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -I/home/pi/robidouille/raspicam_cv -L/home/pi/robidouille/raspicam_cv -L/home/pi/userland/build/lib")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -12,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   alpha_msgs
   sensor_msgs
+  alpha_drivers
 )
 
 ## System dependencies are found with CMake's conventions
@@ -166,6 +166,7 @@ add_executable(marker_localization src/marker_localization_node.cpp src/MarkerLo
 target_link_libraries(marker_localization
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  raspi_cam
 )
 
 add_executable(test_detection src/test_detection.cpp)

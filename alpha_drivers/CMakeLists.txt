@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_drivers)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -lbcm2835 -std=c++11 -I/home/pi/robidouille/raspicam_cv -L/home/pi/robidouille/raspicam_cv -L/home/pi/userland/build/lib")
 #
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -84,7 +84,7 @@ find_package(OpenCV 2.4.8 REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES PCA9685 sbus_decoder
+  LIBRARIES PCA9685 sbus_decoder raspi_cam
 #  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
@@ -185,13 +185,24 @@ add_dependencies(spi_sensors ${alpha_msgs_EXPORTED_TARGETS})
 #  )
 #add_dependencies(rcout_node ${alpha_msgs_EXPORTED_TARGETS})
 
+
+
+add_library(raspi_cam src/RaspiCam.cpp)
+target_link_libraries(raspi_cam
+  ${OpenCV_LIBRARIES}
+  raspicamcv
+  mmal_core
+  mmal
+  mmal_util
+  vcos
+  bcm_host
+)
 add_executable(camera_node src/raspi_camera.cpp)
 target_link_libraries(camera_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  raspi_cam
 )
-
-
 add_executable(indicator_node src/status_indicator.cpp)
 target_link_libraries(indicator_node
   ${catkin_LIBRARIES}

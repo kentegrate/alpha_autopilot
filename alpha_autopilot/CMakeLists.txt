@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(alpha_autopilot)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11 -I/home/pi/robidouille/raspicam_cv -L/home/pi/robidouille/raspicam_cv -L/home/pi/userland/build/lib")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages

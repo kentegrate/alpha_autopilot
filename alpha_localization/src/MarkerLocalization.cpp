@@ -28,12 +28,14 @@ void MarkerLocalization::loadMarkerPosition(){
 
 }
 void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners){
-  Mat gray;
-  cvtColor(input,gray,CV_BGR2GRAY);
+
+
+
+  //  cvtColor(input,gray,CV_BGR2GRAY);
   Mat thresh_img,thresh_img2;
 
-  threshold(gray, thresh_img, 100, 255, THRESH_BINARY);
-  imshow("detection_result",thresh_img);
+  threshold(input, thresh_img, 100, 255, THRESH_BINARY);
+  //  imshow("detection_result",thresh_img);
   //  output = Mat::zeros(thresh_img.rows, thresh_img.cols, CV_8UC3);
   std::vector<std::vector<Point> > contours,filtered;
   std::vector<Vec4i> hierarchy;
@@ -61,6 +63,7 @@ void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners)
     int j = hierarchy[i][2];
     while(j!=-1){
       if(area[j] < area[i] *0.2 && area[j] > area[i]*0.05 && area[j] > 25 ){
+	//	std::cout<<"i/j "<<area[i]/area[j]<<std::endl;
 	Moments m_i = moments(contours[i]);
 	Moments m_j = moments(contours[j]);
 	if(pow(m_i.m10/m_i.m00 - m_j.m10/m_j.m00, 2)+
@@ -95,9 +98,9 @@ void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners)
     }
   }
   if(corners.size() > 0){
-    cornerSubPix(gray, corners, Size(2,2), 
+    cornerSubPix(input, corners, Size(5,5), 
 		 Size(-1, -1), 
-		 TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 30, 0.1));
+		 TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.1));
   }
 }
 
@@ -153,18 +156,21 @@ void MarkerLocalization::sort_helper(std::vector<Point2f> &sorting, std::pair<fl
 Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   Pose pose;
   
-  Mat rvec,tvec,R,R_t;
-  std::cout<<"cam mat "<<camMatrix<<std::endl;
+  Mat R,R_t;
+  Mat rvec = Mat::zeros(3,1,CV_64FC1);
+  Mat tvec = Mat::zeros(3,1,CV_64FC1);
   
-  for(int i = 0; i < objectPoints.size(); i++){
-    std::cout<<objectPoints[i]<<std::endl;
-  }
-  solvePnP(objectPoints,corners,camMatrix,distCoeffs,rvec,tvec);
+  //  for(int i = 0; i < objectPoints.size(); i++){
+  //    std::cout<<objectPoints[i]<<std::endl;
+  //  }
+  Mat inliers;
+  //   solvePnPRansac(objectPoints,corners,camMatrix,distCoeffs,rvec,tvec,false,100,8,5,inliers,CV_EPNP);
+   solvePnP(objectPoints,corners,camMatrix,distCoeffs,rvec,tvec,false,CV_EPNP);
   std::vector<Point2f> imagePoints;
-  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
-  for(int i = 0; i < imagePoints.size(); i++)
-    std::cout<<imagePoints[i]<<std::endl;
-    cv::Rodrigues(rvec,R);
+  //  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
+  //  for(int i = 0; i < imagePoints.size(); i++)
+  //    std::cout<<imagePoints[i]<<std::endl;
+  cv::Rodrigues(rvec,R);
   cv::transpose(R,R_t);
   tvec = -R_t*tvec;
   cv::Rodrigues(R_t,rvec);
