@@ -56,15 +56,16 @@ class AutoMode : public AlphaMode{
 
 
  public:
+  int phase;
   bool is_initial = true;
   bool isInitial(){return is_initial;}
   virtual AlphaState get_setpoint(AlphaState state)= 0;
-  float get_throttle(){
-    return initial_rc_in[THROTTLE_CH];
-  }
+  virtual float get_throttle() = 0;
+
   AutoMode(AlphaState _initial_state,AlphaCommand _initial_rc_in){
     initial_state = _initial_state;
     initial_rc_in = _initial_rc_in;
+    phase = 0;
   }
   //  AlphaState get_setpoint(AlphaState state){} refresh current state and return setpoint
   // AlphaCommand getAlphaCommand(){}
@@ -117,5 +118,7 @@ class Land : public AutoMode{
   AlphaCommand getAlphaCommand(){
     return AlphaCommand::AUTO_LANDING_CMD();
   }
+ private:
+  current_state;//used for get_throttle
 };
 #endif //ALPHA_AUTOPILOT_ALPHAMODE_H
