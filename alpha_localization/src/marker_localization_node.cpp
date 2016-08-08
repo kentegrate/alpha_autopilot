@@ -56,6 +56,7 @@ int main(int argc, char* argv[]){
   
 
   MarkerLocalization ml;
+  ml.init();
   ml.loadMarkerPosition();
   ml.loadCameraInfo();
 
