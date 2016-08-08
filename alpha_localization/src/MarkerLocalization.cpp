@@ -180,14 +180,15 @@ Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   //  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
   //  for(int i = 0; i < imagePoints.size(); i++)
   //    std::cout<<imagePoints[i]<<std::endl;
-  Mat ahrs_rvec = (cv::Mat_<double>(3,1) << (double)(ahrs_euler.y),(double)(-ahrs_euler.z),(double)(-ahrs_euler.x));
+  Mat ahrs_rvec = (cv::Mat_<double>(3,1) << (double)(-ahrs_euler.y),0,(double)(ahrs_euler.x));
   Mat ahrs_R;
   cv::Rodrigues(ahrs_rvec,ahrs_R);
 		   
   tvec = -ahrs_R*tvec;
 
+
   pose.rot = ahrs_euler;
-  
+  pose.rot.z = 0;
   pose.pos.x = tvec.at<double>(2,0);
   pose.pos.y =-tvec.at<double>(0,0);
   pose.pos.z =-tvec.at<double>(1,0);
