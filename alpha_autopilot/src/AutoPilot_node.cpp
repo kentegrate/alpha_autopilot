@@ -54,8 +54,10 @@ int main(int argc, char* argv[]){
 
   ros::Rate rate(500);
   while(rcin.ok()){
+
     ros::spinOnce();
     rate.sleep();
+
   }
 
   return 0;
