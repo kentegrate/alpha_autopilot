@@ -24,7 +24,7 @@ bool AlphaCommand::operator==(const AlphaCommand &that)const{
 bool AlphaCommand::operator!=(const AlphaCommand &that)const{
   return !((*this) == that);
 }
-AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState current_state){
+AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState imu_state, AlphaState marker_state){
 
   std::vector<int> descretized;
   for(int i = 0; i < channels.size(); i++){
@@ -47,15 +47,15 @@ AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState current_sta
   if(AlphaCommand::MANUAL_CMD() == new_alpha_cmd)
     new_mode = new ManualMode;
   else if(AlphaCommand::AUTO_HORIZONTAL_TURN_CMD() == new_alpha_cmd)
-    new_mode = new HorizontalTurn(current_state,(*this));
+    new_mode = new HorizontalTurn(imu_state,(*this));
   else if(AlphaCommand::AUTO_EIGHT_TURN_CMD() == new_alpha_cmd)
-    new_mode = new EightTurn(current_state,(*this));
+    new_mode = new EightTurn(imu_state,(*this));
   else if(AlphaCommand::AUTO_RISE_TURN_CMD() == new_alpha_cmd)
-    new_mode = new RiseTurn(current_state,(*this));
+    new_mode = new RiseTurn(imu_state,(*this));
   else if(AlphaCommand::AUTO_GLIDE_CMD() == new_alpha_cmd)
-    new_mode = new Glide(current_state,(*this));
+    new_mode = new Glide(imu_state,(*this));
   else if(AlphaCommand::AUTO_LANDING_CMD() == new_alpha_cmd)
-    new_mode = new Land(current_state,(*this));
+    new_mode = new Land(marker_state,(*this));
   else if(AlphaCommand::SET_TRIM_CMD() == new_alpha_cmd)
     new_mode = new SetTrim;
   else if(AlphaCommand::CALIBRATE_CMD() == new_alpha_cmd)

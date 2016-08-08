@@ -14,6 +14,7 @@ class AutoPilot{
  private:
   PID pid_roll;
   PID pid_pitch;
+  PID pid_yaw;
   PID pid_z;
   
   std::vector<int> trim;
@@ -24,8 +25,10 @@ class AutoPilot{
   ros::Publisher calibrate_pub;
   ros::Publisher rcout_pub;
   ros::Subscriber state_sub;
+  ros::Subscriber marker_state_sub;
   
-  AlphaState state;
+  AlphaState imu_state;
+  AlphaState marker_state;
 
   Ada_ServoDriver pwm;
 
@@ -40,6 +43,7 @@ class AutoPilot{
 
   void setRCOut(std::vector<int> &rc_out);
   void stateCB(alpha_msgs::FilteredState::ConstPtr msg);
+  void marker_stateCB(alpha_msgs::FilteredState::ConstPtr msg);
   std::vector<int> compute_auto_rc_out(float roll_effort, float pitch_effort, float throttle);
   std::vector<int> compute_manual_rc_out(std::vector<int> rc_in);
   void send_calibrate_request();
