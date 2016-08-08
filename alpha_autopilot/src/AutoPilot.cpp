@@ -37,12 +37,12 @@ void AutoPilot::update(){
       pid_z.initialize();
       pid_yaw.initialize();
     }
-    AlphaState &state = current_mode->getAlphaCommand() != AlphaCommand::AUTO_LAND_CMD() ?
+    AlphaState &state = current_mode->getAlphaCommand() != AlphaCommand::AUTO_LANDING_CMD() ?
       imu_state : marker_state;//use  marker state on auto landing
     setpoint = automode->get_setpoint(state);
     float rudder_effort,elevator_effort;
 
-    if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_LAND_CMD()){
+    if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_LANDING_CMD()){
       pid_roll.set_setpoint(setpoint.rot.x);
       rudder_effort = pid_roll.update(state.rot.x);
     }

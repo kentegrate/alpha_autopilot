@@ -82,6 +82,7 @@ class HorizontalTurn : public AutoMode{
  public:
  HorizontalTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
   AlphaState get_setpoint(AlphaState state);
+  float get_throttle();
   AlphaCommand getAlphaCommand(){
     return AlphaCommand::AUTO_HORIZONTAL_TURN_CMD();
   }
@@ -90,6 +91,7 @@ class EightTurn : public AutoMode{
  public:
   EightTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
   AlphaState get_setpoint(AlphaState state);
+    float get_throttle();
   AlphaCommand getAlphaCommand(){  
     return AlphaCommand::AUTO_EIGHT_TURN_CMD();
   }
@@ -98,6 +100,7 @@ class RiseTurn : public AutoMode{
  public:
   RiseTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
   AlphaState get_setpoint(AlphaState state);
+    float get_throttle();
   AlphaCommand getAlphaCommand(){
     return AlphaCommand::AUTO_RISE_TURN_CMD();
   }
@@ -107,6 +110,7 @@ class Glide : public AutoMode{
  public:
   Glide(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
   AlphaState get_setpoint(AlphaState state);
+    float get_throttle();
   AlphaCommand getAlphaCommand(){
     return AlphaCommand::AUTO_GLIDE_CMD();
   }
@@ -115,10 +119,11 @@ class Land : public AutoMode{
  public:
   Land(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
   AlphaState get_setpoint(AlphaState state);
+    float get_throttle();
   AlphaCommand getAlphaCommand(){
     return AlphaCommand::AUTO_LANDING_CMD();
   }
  private:
-  current_state;//used for get_throttle
+  AlphaState current_state;//used for get_throttle
 };
 #endif //ALPHA_AUTOPILOT_ALPHAMODE_H

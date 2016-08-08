@@ -90,7 +90,7 @@ AlphaCommand():channels(8,0){
   int operator[](int index) const;
   bool operator==(const AlphaCommand &that)const;
   bool operator!=(const AlphaCommand &that)const;
-  AlphaMode* getMode(AlphaMode* current_mode, AlphaState current_state);
+  AlphaMode* getMode(AlphaMode* current_mode, AlphaState current_state,AlphaState marker_state);
 
 };
 

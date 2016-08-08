@@ -13,7 +13,7 @@ float add_angle(float ang1, float ang2){//add angles and
   while(fabsf(ans) > M_PI){
     ans += ans > 0 ? -2*M_PI : 2*M_PI;
   }
-  return ans
+  return ans;
 }
 //check if the abs of the difference between the two 
 //angles is within the error_range
@@ -33,7 +33,7 @@ AlphaState HorizontalTurn::get_setpoint(AlphaState state){
   is_initial = false;
   return setpoint;
 }
-float HornizontalTurn::get_throttle(){
+float HorizontalTurn::get_throttle(){
   return initial_rc_in[THROTTLE_CH];
 }
 
@@ -111,8 +111,8 @@ float Glide::get_throttle(){
 
 AlphaState Land::get_setpoint(AlphaState state){//marker state
   AlphaState setpoint;
-  float x0 = initial_state.pose.x;
-  float z0 = initial_state.pose.z;
+  float x0 = initial_state.pos.x;
+  float z0 = initial_state.pos.z;
   float x1 = land_pos_x;
   float z1 = land_pos_z;
   setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
