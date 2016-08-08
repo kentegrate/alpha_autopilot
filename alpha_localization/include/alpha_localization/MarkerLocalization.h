@@ -4,6 +4,8 @@
 #include <ros/ros.h>
 #include <algorithm>
 #include <opencv2/opencv.hpp>
+#include <alpha_msgs/FilteredState.h>
+
 using namespace cv;
 
 struct Vector3{
@@ -35,6 +37,7 @@ class MarkerLocalization{
   ros::Subscriber ahrs_sub;
   ros::NodeHandle private_nh;
   std::vector<Point3f> objectPoints;
+
   
   Mat camMatrix;
   Mat distCoeffs;
@@ -43,8 +46,9 @@ class MarkerLocalization{
  public:
   MarkerLocalization();
   void init();
+  void ahrsCB(const alpha_msgs::FilteredState::ConstPtr msg);
   void loadMarkerPosition();
-  void getCVCorners(Mat &input, std::vector<Point2f> &corners);
+  void getCVCorners(Mat &input, std::vector<Point2f> &corners,Mat &debug_image);
   void loadCameraInfo();
   Pose solvePose(std::vector<Point2f> &corners);
   void sortCorners(std::vector<Point2f> &corners);

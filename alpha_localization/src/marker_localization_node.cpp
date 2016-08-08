@@ -3,11 +3,14 @@
 #include <alpha_msgs/FilteredState.h>
 #include <signal.h>
 #include <alpha_drivers/RaspiCam.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+
 #include <time.h>
 bool running = true;
 RaspiCam input;
-float k_q = 0.1;
-float k_t = 0.1;
+float k_q = 0.5;
+float k_t = 0.5;
 void quaternion_to_euler(float* q,float* euler){
   euler[0] = atan2(2*(q[0]*q[1]+q[2]*q[3]),1-2*(q[1]*q[1]+q[2]*q[2]));
   euler[1] = asin(2*(q[0]*q[2]-q[3]*q[1]));
@@ -42,6 +45,9 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"marker_localization_node",ros::init_options::NoSigintHandler);
   ros::NodeHandle nh;
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/marker_pose",10);
+  image_transport::ImageTransport it(nh);
+  image_transport::Publisher image_pub = it.advertise("/camera/image_raw",1);
+
 
   for(int i = 0; i < 64; i++){
     struct sigaction sa;
@@ -73,7 +79,10 @@ int main(int argc, char* argv[]){
 
     double last_update = get_dtime();
     std::vector<Point2f> corners;
-    ml.getCVCorners(image,corners);
+    Mat debug_image;
+    ml.getCVCorners(image,corners,debug_image);
+    sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(),"mono8",debug_image).toImageMsg();
+    image_pub.publish(image_msg);
     if(corners.size() < 4)
       continue;
     
@@ -93,7 +102,7 @@ int main(int argc, char* argv[]){
     new_trans[1] =pose.pos.y;
     new_trans[2] =pose.pos.z;
 
-    if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
+    /*    if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
        new_trans[1] < 10 && new_trans[1] > -10 &&
 	 new_trans[2] < 5 && new_trans[2] > 0))
       continue;
@@ -111,16 +120,16 @@ int main(int argc, char* argv[]){
       q[i]/=q_norm;
     std::vector<float> euler(3,0);
     quaternion_to_euler(&q[0],&euler[0]);
-    
+    */
     alpha_msgs::FilteredState msg;
-    msg.x = trans[0];
-    msg.y = trans[1];
-    msg.z = trans[2];
-    msg.roll = euler[0];
-    msg.pitch = euler[1];
-    msg.yaw = euler[2];
+    msg.x = new_trans[0];
+    msg.y = new_trans[1];
+    msg.z = new_trans[2];
+    msg.roll = new_euler[0];
+    msg.pitch = new_euler[1];
+    msg.yaw = new_euler[2];
     pose_pub.publish(msg);
-
+    ros::spinOnce();
     //    pose.print();
 
   }

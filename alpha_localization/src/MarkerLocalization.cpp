@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+
 MarkerLocalization::MarkerLocalization(){
   
 }
@@ -34,14 +35,16 @@ void MarkerLocalization::loadMarkerPosition(){
     }
 
 }
-void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners){
+void MarkerLocalization::getCVCorners(Mat &input, std::vector<Point2f> &corners, Mat &debug_image){
 
 
 
   //  cvtColor(input,gray,CV_BGR2GRAY);
   Mat thresh_img,thresh_img2;
-
+  
   threshold(input, thresh_img, 100, 255, THRESH_BINARY);
+
+  thresh_img.copyTo(debug_image);
   //  imshow("detection_result",thresh_img);
   //  output = Mat::zeros(thresh_img.rows, thresh_img.cols, CV_8UC3);
   std::vector<std::vector<Point> > contours,filtered;
@@ -177,7 +180,7 @@ Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   //  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
   //  for(int i = 0; i < imagePoints.size(); i++)
   //    std::cout<<imagePoints[i]<<std::endl;
-  Mat ahrs_rvec = (cv::Mat_<double>(3,1) << (double)(-ahrs_euler.y),(double)(-ahrs_euler.z),(double)(ahrs_euler.x));
+  Mat ahrs_rvec = (cv::Mat_<double>(3,1) << (double)(ahrs_euler.y),(double)(-ahrs_euler.z),(double)(-ahrs_euler.x));
   Mat ahrs_R;
   cv::Rodrigues(ahrs_rvec,ahrs_R);
 		   
