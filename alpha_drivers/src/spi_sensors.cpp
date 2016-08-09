@@ -84,8 +84,11 @@ int main(int argc, char* argv[]){
   float gyro[3];
   float mag[3];
   float pressure;
+  std::vector<float> mag_max(3,-99999);
+  std::vector<float> mag_min(3,99999);
+  int sample_count = 0;
   while(ros::ok()){
-    
+
     updatePressure(barometer_state,barometer,pressure);
     alpha_msgs::AirPressure baro_msg;
     baro_msg.pressure = pressure;
@@ -101,10 +104,31 @@ int main(int argc, char* argv[]){
 
     imu_pub.publish(imu_msg);
 
-    ahrs.MadgwickAHRSupdateIMU(gyro[0],gyro[1],gyro[2],
+    float mag_sum=0;
+    for(int i = 0; i < 3; i++){
+      mag_max[i] = mag_max[i] > mag[i] ? mag_max[i] : mag[i];
+      mag_min[i] = mag_min[i] < mag[i] ? mag_min[i] : mag[i];      
+      mag_bias[i] = (mag_max[i]+mag_min[i])/2;
+      mag_scale[i] = (mag_max[i]-mag_min[i])/2;
+      mag_sum+=mag_scale[i];
+    }
+    if(sample_count > 1000){
+      for(int i = 0; i < 3; i++){
+	mag_scale[i] = (mag_sum/3)/mag_scale[i];
+	mag[i] -= mag_bias[i];
+	mag[i] *= mag_scale[i];
+      }
+    }
+    else{
+      sample_count++;
+    }
+    ahrs.MadgwickAHRSupdate(gyro[0],gyro[1],gyro[2],
 			    accel[0],accel[1],accel[2]);
-    //			    mag[1],mag[0],-mag[2]);
+                            mag[1],mag[0],-mag[2]);
 
+
+
+    
     geometry_msgs::Quaternion quat_msg;
     quat_msg.x = (double)ahrs.q1;
     quat_msg.y = (double)ahrs.q2;
@@ -126,6 +150,7 @@ int main(int argc, char* argv[]){
     
     rate.sleep();
     ros::spinOnce();
+    
   }
   return 0;
 }
