@@ -120,7 +120,8 @@ void AutoPilot::marker_stateCB(alpha_msgs::FilteredState::ConstPtr msg){
   marker_state.rot.z = msg->yaw;
 }
 void AutoPilot::setRCIn(std::vector<int> &rc_in){
-
+  for(int i = 0; i < 8; i ++)
+    this->rc_in[i] = rc_in[i];
   AlphaCommand cmd(rc_in);
   current_mode = cmd.getMode(current_mode,imu_state,marker_state);
 

@@ -47,7 +47,8 @@ int main(int argc, char* argv[]){
     sa.sa_handler = termination_handler;
     sigaction(i,&sa,NULL);
   }
-  
+  gpio.init();
+  rcin.init();
 
   ros::Timer rcin_timer = nh.createTimer(ros::Duration(0.002),boost::bind(rcInEvent,_1,&autopilot));
 

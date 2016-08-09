@@ -101,9 +101,9 @@ int main(int argc, char* argv[]){
 
     imu_pub.publish(imu_msg);
 
-    ahrs.MadgwickAHRSupdate(gyro[0],gyro[1],gyro[2],
-			    accel[0],accel[1],accel[2],
-			    mag[1],mag[0],-mag[2]);
+    ahrs.MadgwickAHRSupdateIMU(gyro[0],gyro[1],gyro[2],
+			    accel[0],accel[1],accel[2]);
+    //			    mag[1],mag[0],-mag[2]);
 
     geometry_msgs::Quaternion quat_msg;
     quat_msg.x = (double)ahrs.q1;
