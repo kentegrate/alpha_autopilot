@@ -117,7 +117,8 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
   float z1 = land_pos_z;
   setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
   
-  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
+  //  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
+  setpoint.pos.y = 0;
   //according to the plus and minus of yaw.
   
   is_initial = false;

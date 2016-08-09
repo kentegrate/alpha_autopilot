@@ -47,8 +47,8 @@ void AutoPilot::update(){
       rudder_effort = pid_roll.update(state.rot.x);
     }
     else{
-      pid_yaw.set_setpoint(setpoint.rot.z);
-      rudder_effort = pid_yaw.update(state.rot.z);
+      pid_yaw.set_setpoint(setpoint.pos.y);
+      rudder_effort = pid_yaw.update(state.pos.y);
     }
 
     if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_GLIDE_CMD()){

@@ -12,7 +12,9 @@ class RaspiCam{
  public:
   void init(int width=640,int height=480,int framerate=15,
        bool monochrome = false);
-
+  ~RaspiCam(){
+    releaseCamera();
+  }
   void getFrame(cv::Mat &frame);
   void releaseCamera();
 

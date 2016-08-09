@@ -31,7 +31,7 @@ void euler_to_quaternion(float* euler, float* q){
 }
 void termination_handler(int sig){
   running = false;
-  input.releaseCamera();
+  //  input.releaseCamera();
   ros::shutdown();
 }
 double get_dtime(void)
