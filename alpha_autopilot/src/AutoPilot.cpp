@@ -129,8 +129,11 @@ void AutoPilot::setRCIn(std::vector<int> &rc_in){
 void AutoPilot::setRCOut(std::vector<int> &rc_out){
   alpha_msgs::RC msg;
   for(int i = 0; i < 8; i++){
-    pwm.setServoPulse(i+3,rc_out[i]);
     msg.Channel.push_back(rc_out[i]);
+    if(i == AUTOPILOT_LED_CH)
+      pwm.setPWM(i+3,0,rc_out[i]);
+    else
+      pwm.setServoPulse(i+3,rc_out[i]);
   }
   rcout_pub.publish(msg);
   //  nh.setParam("/rc_out",rc_out);

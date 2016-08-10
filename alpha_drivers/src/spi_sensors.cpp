@@ -84,9 +84,11 @@ int main(int argc, char* argv[]){
   float gyro[3];
   float mag[3];
   float pressure;
-  std::vector<float> mag_max(3,-99999);
+  /*  std::vector<float> mag_max(3,-99999);
   std::vector<float> mag_min(3,99999);
-  int sample_count = 0;
+  std::vector<float> mag_bias(3,0);
+  std::vector<float> mag_scale(3,1);
+  int sample_count = 0;*/
   while(ros::ok()){
 
     updatePressure(barometer_state,barometer,pressure);
@@ -97,14 +99,8 @@ int main(int argc, char* argv[]){
     imu.getMotion9(&accel[0],&accel[1],&accel[2],
 		   &gyro[0],&gyro[1],&gyro[2],
 		   &mag[0],&mag[1],&mag[2]);
-    alpha_msgs::IMU imu_msg;
-    imu_msg.linear_acceleration = float2VectorMsg(accel);
-    imu_msg.angular_velocity    = float2VectorMsg(gyro);
-    imu_msg.magnetic_field      = float2VectorMsg(mag);
 
-    imu_pub.publish(imu_msg);
-
-    float mag_sum=0;
+    /*    float mag_sum=0;
     for(int i = 0; i < 3; i++){
       mag_max[i] = mag_max[i] > mag[i] ? mag_max[i] : mag[i];
       mag_min[i] = mag_min[i] < mag[i] ? mag_min[i] : mag[i];      
@@ -121,9 +117,20 @@ int main(int argc, char* argv[]){
     }
     else{
       sample_count++;
-    }
+      }*/
+    mag[0] = (mag[0]-(-15.71220684))*1.0895;
+    mag[1] = (mag[1]-(30.37031364))*1.028659;
+    mag[2] = (mag[2]-(-22.31835))*0.90084;
+    alpha_msgs::IMU imu_msg;
+    imu_msg.linear_acceleration = float2VectorMsg(accel);
+    imu_msg.angular_velocity    = float2VectorMsg(gyro);
+    imu_msg.magnetic_field      = float2VectorMsg(mag);
+
+    imu_pub.publish(imu_msg);
+
+    
     ahrs.MadgwickAHRSupdate(gyro[0],gyro[1],gyro[2],
-			    accel[0],accel[1],accel[2]);
+			    accel[0],accel[1],accel[2],
                             mag[1],mag[0],-mag[2]);
 
 
