@@ -51,17 +51,37 @@ void AutoPilot::update(){
       rudder_effort = pid_yaw.update(state.pos.y);
     }
 
-    if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_GLIDE_CMD()){
+    
+    if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_LANDING_CMD()){
+      /*      if(setpoint.pos.z != -1){
+	pid_z.set_setpoint(setpoint.pos.z);
+	setpoint.rot.y = pid_z.update(state.pos.z);
+
+	}*/
+      pid_pitch.set_setpoint(setpoint.rot.y);
+      elevator_effort = pid_pitch.update(state.rot.y);
+    }
+
+
+      
+    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_GLIDE_CMD()){
+      pid_pitch.set_setpoint(setpoint.rot.y);
+      elevator_effort = pid_pitch.update(state.rot.y);
+
+    }
+    else{
       pid_z.set_setpoint(setpoint.pos.z);
       setpoint.rot.y = pid_z.update(state.pos.z);
+
+      pid_pitch.set_setpoint(setpoint.rot.y);
+      elevator_effort = pid_pitch.update(state.rot.y);
+
+
     }
     
-    pid_pitch.set_setpoint(setpoint.rot.y);
-    elevator_effort = pid_pitch.update(state.rot.y);
     float throttle = automode->get_throttle();
 
     rc_out = compute_auto_rc_out(rudder_effort,elevator_effort,throttle);//use trim 
-
 
     //turn on the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     //TODO : throttle effort may be needed

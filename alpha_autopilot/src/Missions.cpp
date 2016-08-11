@@ -1,12 +1,17 @@
 
 #include <alpha_autopilot/AlphaMode.h>
 #include <cmath>
+#include <iostream>
 
-static const int angle_error_range = 0.2;//rad
+static const float angle_error_range = 0.2;//rad
 static const float landing_throttle_off_distance = 17;
 static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
 static const float land_param = 1.0;
+#define LAND_THROTTLE_ZERO_POINT_X -7
+#define LAND_THROTTLE_ZERO_POINT_Z 1
+#define LAND_THROTTLE_FALL_POINT_X -15
+
 float add_angle(float ang1, float ang2){//add angles and 
   // return angles within range from -M_PI to M_PI
   float ans = ang1+ang2;
@@ -22,6 +27,8 @@ bool in_range(float ang1, float ang2, float error_range){
   while(error>M_PI){
     error-=2*M_PI;
   }
+  std::cout<<"error "<<error<<std::endl;
+
   return fabsf(error) < fabsf(error_range);
 }
 //TODO implement missions
@@ -54,7 +61,9 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   }
   if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 2)
     phase++;
-
+  std::cout<<"phase "<<phase<<std::endl;
+  std::cout<<"aim rot z "<< aim_rot_z<<std::endl;
+  std::cout<<"rot z " <<state.rot.z<<std::endl;
   is_initial = false;
   return setpoint;
 }
@@ -111,13 +120,23 @@ float Glide::get_throttle(){
 
 AlphaState Land::get_setpoint(AlphaState state){//marker state
   AlphaState setpoint;
-  float x0 = initial_state.pos.x;
-  float z0 = initial_state.pos.z;
-  float x1 = land_pos_x;
-  float z1 = land_pos_z;
-  setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
+  /*  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
+    setpoint.rot.y = -3*M_PI/180;
+    setpoint.pos.z = -1;//disabled
+  }
+  else{
+    setpoint.rot.y = -1;//disabled
+    float x0 = initial_state.pos.x;
+    float z0 = initial_state.pos.z;
+    float x1 = LAND_THROTTLE_ZERO_POINT_X;
+    float z1 = LAND_THROTTLE_ZERO_POINT_Z;
+    setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
+    }*/
+  setpoint.rot.y = 0;
+    
   
   //  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
+  
   setpoint.pos.y = 0;
   //according to the plus and minus of yaw.
   
@@ -126,8 +145,15 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
   return setpoint;
 }
 float Land::get_throttle(){
-  float dist_marker = sqrt(pow(current_state.pos.x,2)+pow(current_state.pos.y,2));
-  return (dist_marker > landing_throttle_off_distance) ? initial_rc_in[THROTTLE_CH] : 0;
+  float dist_marker = fabsf(current_state.pos.x);
+  if(dist_marker < fabsf(LAND_THROTTLE_ZERO_POINT_X))
+    return 0;
+  else 
+    return initial_rc_in[THROTTLE_CH];
+  /*  else
+    return (initial_rc_in[THROTTLE_CH])*
+      (dist_marker-LAND_THROTTLE_ZERO_POINT_X)/
+      (LAND_THROTTLE_FALL_POINT_X-LAND_THROTTLE_ZERO_POINT_X);*/
 }
 
 
