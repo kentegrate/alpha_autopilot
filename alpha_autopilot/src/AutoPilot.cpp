@@ -4,7 +4,7 @@
 
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
-  trim[0] = 1500;
+  trim[DROP_CH] = 1500;
   trim[ELEVATOR_CH] = 1500;
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
@@ -70,10 +70,14 @@ void AutoPilot::update(){
   else{//manual mode
     rc_out = compute_manual_rc_out(rc_in);
     //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
-    if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD())
-      trim = rc_in;
-    else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD())
+    if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD()){
+      rc_out[DROP_CH] -= 400;
+    }
+
+    else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD()){
       send_calibrate_request();
+      trim = rc_in;
+    }
 	    
   }
 
@@ -91,6 +95,7 @@ std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_ef
 }
 std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
   std::vector<int> rc_out= rc_in;
+  rc_out[DROP_CH] = trim[DROP_CH];
   rc_out[AUTOPILOT_LED_CH] = 0;
   return rc_out;
 }

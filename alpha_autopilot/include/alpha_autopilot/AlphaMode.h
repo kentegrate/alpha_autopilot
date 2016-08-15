@@ -1,6 +1,7 @@
 #ifndef ALPHA_AUTOPILOT_ALPHAMODE_H
 #define ALPHA_AUTOPILOT_ALPHAMODE_H
 
+#define DROP_CH 0//this channel starts from 0
 #define ELEVATOR_CH 1//this channel starts from 0
 #define THROTTLE_CH 2
 #define RUDDER_CH 3
