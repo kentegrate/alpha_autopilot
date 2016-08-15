@@ -1,5 +1,4 @@
 #include <alpha_localization/MarkerLocalization.h>
-#include <alpha_localization/RPP.h>
 #include <sstream>
 #include <string>
 #include <map>
