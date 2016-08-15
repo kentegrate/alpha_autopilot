@@ -42,6 +42,7 @@ class MarkerLocalization{
   Mat camMatrix;
   Mat distCoeffs;
   Vector3 ahrs_euler;
+  Mat camera_t;
   
  public:
   MarkerLocalization();

@@ -9,7 +9,7 @@
 #include <time.h>
 bool running = true;
 RaspiCam input;
-float k_q = 0.5;
+float k_q = 0.2;
 float k_t = 0.2;
 void quaternion_to_euler(float* q,float* euler){
   euler[0] = atan2(2*(q[0]*q[1]+q[2]*q[3]),1-2*(q[1]*q[1]+q[2]*q[2]));
@@ -102,10 +102,10 @@ int main(int argc, char* argv[]){
     new_trans[1] =pose.pos.y;
     new_trans[2] =pose.pos.z;
 
-    if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
-	 new_trans[2] < 10 && new_trans[2] > -2))
-      continue;
-    euler_to_quaternion(&new_euler[0],&new_q[0]);
+    //if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
+    //	 new_trans[2] < 10 && new_trans[2] > -2))
+    //	 continue;
+    /*    euler_to_quaternion(&new_euler[0],&new_q[0]);
     float q_sum = 0;
     for(int i = 0; i < 4; i++){
       q[i] = (1-k_q)*q[i]+k_q*new_q[i];
@@ -118,15 +118,15 @@ int main(int argc, char* argv[]){
     for(int i = 0; i <4; i++)
       q[i]/=q_norm;
     std::vector<float> euler(3,0);
-    quaternion_to_euler(&q[0],&euler[0]);
-    
+    quaternion_to_euler(&q[0],&euler[0]);*/
+
     alpha_msgs::FilteredState msg;
-    msg.x = trans[0];
-    msg.y = trans[1];
-    msg.z = trans[2];
-    msg.roll = euler[0];
-    msg.pitch = euler[1];
-    msg.yaw = euler[2];
+    msg.x = new_trans[0];
+    msg.y = new_trans[1];
+    msg.z = new_trans[2];
+    msg.roll = new_euler[0];
+    msg.pitch = new_euler[1];
+    msg.yaw = new_euler[2];
     pose_pub.publish(msg);
     ros::spinOnce();
     //    pose.print();
