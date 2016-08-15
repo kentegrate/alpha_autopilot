@@ -161,7 +161,7 @@ include_directories(
 #)
 
 
-add_executable(marker_localization src/marker_localization_node.cpp src/MarkerLocalization.cpp)
+add_executable(marker_localization src/marker_localization_node.cpp src/MarkerLocalization.cpp src/Rpoly.cpp src/RPP.cpp)
 
 target_link_libraries(marker_localization
   ${catkin_LIBRARIES}
