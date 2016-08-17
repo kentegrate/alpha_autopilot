@@ -91,7 +91,7 @@ void AutoPilot::update(){
     rc_out = compute_manual_rc_out(rc_in);
     //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD()){
-      rc_out[DROP_CH] -= 400;
+      rc_out[DROP_CH] -= 500;
     }
 
     else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD()){

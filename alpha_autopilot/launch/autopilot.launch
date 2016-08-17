@@ -5,17 +5,17 @@
 
 
 	<node pkg="alpha_autopilot" name="autopilot_node" type="alpha_autopilot_node" respawn="true" output="screen">
-	  <param name="roll/Kp" type="double" value="58.0"/>
-	  <param name="roll/Ki" type="double" value="0.3"/>
-	  <param name="roll/Kd" type="double" value="0.0"/>
+	  <param name="roll/Kp" type="double" value="37.0"/>
+	  <param name="roll/Ki" type="double" value="0.1"/>
+	  <param name="roll/Kd" type="double" value="0.025"/>
 	  <param name="roll/upper_limit" type="double" value="4.100"/>
 	  <param name="roll/lower_limit" type="double" value="-4.100"/>
 	  <param name="roll/windup_limit" type="double" value="100.0"/>
 	  <param name="roll/cutoff_frequency" type="double" value="25"/>
 
-	  <param name="pitch/Kp" type="double" value="0.54"/>
-	  <param name="pitch/Ki" type="double" value="0.09"/>
-	  <param name="pitch/Kd" type="double" value="0.04"/>
+	  <param name="pitch/Kp" type="double" value="5.0"/>
+	  <param name="pitch/Ki" type="double" value="0.01"/>
+	  <param name="pitch/Kd" type="double" value="0.0025"/>
 	  <param name="pitch/upper_limit" type="double" value="4.100"/>
 	  <param name="pitch/lower_limit" type="double" value="-4.100"/>
 	  <param name="pitch/windup_limit" type="double" value="100.0"/>
