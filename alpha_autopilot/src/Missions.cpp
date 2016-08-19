@@ -36,7 +36,7 @@ bool in_range(float ang1, float ang2, float error_range){
 AlphaState HorizontalTurn::get_setpoint(AlphaState state){
   AlphaState setpoint;
   setpoint.pos.z = initial_state.pos.z;
-  setpoint.rot.x =0.4;
+  setpoint.rot.x =0.5;
   is_initial = false;
   return setpoint;
 }
@@ -49,15 +49,15 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   setpoint.pos.z = initial_state.pos.z;
   float aim_rot_z = 0;
   if(phase == 0){//first half of the eight turn
-    setpoint.rot.x = 0.4;
+    setpoint.rot.x = 0.5;
     aim_rot_z = add_angle(initial_state.rot.z,M_PI);
   }
   else if(phase == 1){
-    setpoint.rot.x = 0.4;
+    setpoint.rot.x = 0.5;
     aim_rot_z = add_angle(initial_state.rot.z,0);
   }
   else{//other side of the eight turn
-    setpoint.rot.x = -0.4;
+    setpoint.rot.x = -0.5;
   }
   if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 2)
     phase++;
@@ -74,7 +74,7 @@ float EightTurn::get_throttle(){
 
 AlphaState RiseTurn::get_setpoint(AlphaState state){
  AlphaState setpoint;
- setpoint.rot.x = 0.4;
+ setpoint.rot.x = 0.5;
  float aim_rot_z;
  if(phase==0){
    setpoint.pos.z = initial_state.pos.z;
@@ -92,17 +92,32 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
    setpoint.pos.z = initial_state.pos.z;
    aim_rot_z = add_angle(initial_state.rot.z,0);
  }
- else{
+ else if(phase==4){
    setpoint.pos.z = initial_state.pos.z+4;
+   aim_rot_z = add_angle(initial_state.rot.z,M_PI);
  }
- if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 4)
+ else if(phase==5){
+   setpoint.pos.z = initial_state.pos.z+4;
+   aim_rot_z = add_angle(initial_state.rot.z,M_PI);
+ }
+ else if(phase==6){
+   setpoint.pos.z = initial_state.pos.z+4;
+   aim_rot_z = add_angle(initial_state.rot.z,0);
+ }
+
+ if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 7)
    phase++;
 
   is_initial = false;
   return setpoint;
 }
 float RiseTurn::get_throttle(){
-  return initial_rc_in[THROTTLE_CH];
+  if(phase==4){
+    return 1300;
+  }
+  else{ 
+    return initial_rc_in[THROTTLE_CH];
+  }
 }
 
 
