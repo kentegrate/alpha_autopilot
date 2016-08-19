@@ -58,8 +58,8 @@ class AutoMode : public AlphaMode{
 
  public:
   int phase;
-  bool is_initial = true;
-  bool isInitial(){return is_initial;}
+  bool pid_reset = true;
+  bool isInitial(){return pid_reset;}
   virtual AlphaState get_setpoint(AlphaState state)= 0;
   virtual float get_throttle() = 0;
 

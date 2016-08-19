@@ -4,7 +4,7 @@
 
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
-  trim[DROP_CH] = 1500;
+  trim[DROP_CH] = 1519;
   trim[ELEVATOR_CH] = 1500;
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
@@ -91,7 +91,7 @@ void AutoPilot::update(){
     rc_out = compute_manual_rc_out(rc_in);
     //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
     if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD()){
-      rc_out[DROP_CH] -= 400;
+      rc_out[DROP_CH]= 1034;
     }
 
     else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD()){

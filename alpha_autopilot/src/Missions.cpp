@@ -8,6 +8,8 @@ static const float landing_throttle_off_distance = 17;
 static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
 static const float land_param = 1.0;
+#define MAX_ROLL_SETPOINT 0.4
+#define MIN_ROLL_SETPOINT 0.3
 #define LAND_THROTTLE_ZERO_POINT_X -7
 #define LAND_THROTTLE_ZERO_POINT_Z 1
 #define LAND_THROTTLE_FALL_POINT_X -15
@@ -36,8 +38,8 @@ bool in_range(float ang1, float ang2, float error_range){
 AlphaState HorizontalTurn::get_setpoint(AlphaState state){
   AlphaState setpoint;
   setpoint.pos.z = initial_state.pos.z;
-  setpoint.rot.x =0.5;
-  is_initial = false;
+  setpoint.rot.x =MAX_ROLL_SETPOINT;
+  pid_reset = false;
   return setpoint;
 }
 float HorizontalTurn::get_throttle(){
@@ -49,22 +51,31 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   setpoint.pos.z = initial_state.pos.z;
   float aim_rot_z = 0;
   if(phase == 0){//first half of the eight turn
-    setpoint.rot.x = 0.5;
+    setpoint.rot.x = MAX_ROLL_SETPOINT;
     aim_rot_z = add_angle(initial_state.rot.z,M_PI);
   }
   else if(phase == 1){
-    setpoint.rot.x = 0.5;
-    aim_rot_z = add_angle(initial_state.rot.z,0);
+    setpoint.rot.x = MAX_ROLL_SETPOINT;
+    aim_rot_z = add_angle(initial_state.rot.z,M_PI/3);
   }
-  else{//other side of the eight turn
-    setpoint.rot.x = -0.5;
+  else if(phase == 2){//other side of the eight turn
+    setpoint.rot.x = -MAX_ROLL_SETPOINT;
+    aim_rot_z = add_angle(initial_state.rot.z,M_PI);
   }
-  if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 2)
+  else if(phase == 3){
+    setpoint.rot.x = -MAX_ROLL_SETPOINT;
+    aim_rot_z = add_angle(initial_state.rot.z,M_PI/3);
+  }
+  else{
+    setpoint.rot.x = 0;
+  }
+  pid_reset = false;
+  if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 4){
     phase++;
-  std::cout<<"phase "<<phase<<std::endl;
-  std::cout<<"aim rot z "<< aim_rot_z<<std::endl;
-  std::cout<<"rot z " <<state.rot.z<<std::endl;
-  is_initial = false;
+    if(phase == 2)
+      pid_reset = true;
+  }
+
   return setpoint;
 }
 float EightTurn::get_throttle(){
@@ -74,7 +85,7 @@ float EightTurn::get_throttle(){
 
 AlphaState RiseTurn::get_setpoint(AlphaState state){
  AlphaState setpoint;
- setpoint.rot.x = 0.5;
+ setpoint.rot.x = MAX_ROLL_SETPOINT;
  float aim_rot_z;
  if(phase==0){
    setpoint.pos.z = initial_state.pos.z;
@@ -104,11 +115,17 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
    setpoint.pos.z = initial_state.pos.z+4;
    aim_rot_z = add_angle(initial_state.rot.z,0);
  }
-
- if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 7)
+ 
+ pid_reset = false;
+ 
+ if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 7){
    phase++;
+   if(phase==4)
+     pid_reset = true;
+ }
+ 
 
-  is_initial = false;
+
   return setpoint;
 }
 float RiseTurn::get_throttle(){
@@ -123,9 +140,9 @@ float RiseTurn::get_throttle(){
 
 AlphaState Glide::get_setpoint(AlphaState state){
   AlphaState setpoint;
-  setpoint.rot.x = 0.4;
-  setpoint.rot.y = 0.1;
-  is_initial = false;
+  setpoint.rot.x = MIN_ROLL_SETPOINT;
+  setpoint.rot.y = -0.05;
+  pid_reset = false;
   return setpoint;
 }
 float Glide::get_throttle(){
@@ -155,7 +172,7 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
   setpoint.pos.y = 0;
   //according to the plus and minus of yaw.
   
-  is_initial = false;
+  pid_reset = false;
   current_state = state;
   return setpoint;
 }
