@@ -59,6 +59,13 @@ class AutoMode : public AlphaMode{
  public:
   int phase;
   bool pid_reset = true;
+
+  bool pid_z;
+  bool pid_pitch;
+  bool pid_yaw;
+  bool pid_roll;
+  bool pid_throttle;
+
   bool isInitial(){return pid_reset;}
   virtual AlphaState get_setpoint(AlphaState state)= 0;
   virtual float get_throttle() = 0;
@@ -81,7 +88,15 @@ class AutoMode : public AlphaMode{
 //concrete classes of auto modes
 class HorizontalTurn : public AutoMode{
  public:
- HorizontalTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
+ HorizontalTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){
+
+    pid_roll = true;
+    pid_yaw = false;
+    pid_z = true;
+    pid_pitch = true;
+    pid_throttle = true;
+
+  }
   AlphaState get_setpoint(AlphaState state);
   float get_throttle();
   AlphaCommand getAlphaCommand(){
@@ -90,7 +105,14 @@ class HorizontalTurn : public AutoMode{
 };
 class EightTurn : public AutoMode{
  public:
-  EightTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
+  EightTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){
+    pid_roll = true;
+    pid_yaw = false;
+    pid_z = true;
+    pid_pitch = true;
+    pid_throttle = true;
+
+  }
   AlphaState get_setpoint(AlphaState state);
     float get_throttle();
   AlphaCommand getAlphaCommand(){  
@@ -99,7 +121,13 @@ class EightTurn : public AutoMode{
 };
 class RiseTurn : public AutoMode{
  public:
-  RiseTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
+  RiseTurn(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){
+    pid_roll = true;
+    pid_yaw = false;
+    pid_z = true;
+    pid_pitch = true;
+    pid_throttle = true;
+}
   AlphaState get_setpoint(AlphaState state);
     float get_throttle();
   AlphaCommand getAlphaCommand(){
@@ -109,7 +137,14 @@ class RiseTurn : public AutoMode{
 };
 class Glide : public AutoMode{
  public:
-  Glide(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
+  Glide(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){
+    pid_roll = true;
+    pid_yaw = false;
+    pid_z = false;
+    pid_pitch = true;
+    pid_throttle = false;
+
+  }
   AlphaState get_setpoint(AlphaState state);
     float get_throttle();
   AlphaCommand getAlphaCommand(){
@@ -118,7 +153,14 @@ class Glide : public AutoMode{
 };
 class Land : public AutoMode{
  public:
-  Land(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){}
+  Land(AlphaState _initial_state,AlphaCommand _initial_rc_in) : AutoMode(_initial_state, _initial_rc_in){
+    pid_roll = false;
+    pid_yaw = true;
+    pid_z = true;
+    pid_pitch = true;
+    pid_throttle = false;
+
+}
   AlphaState get_setpoint(AlphaState state);
     float get_throttle();
   AlphaCommand getAlphaCommand(){

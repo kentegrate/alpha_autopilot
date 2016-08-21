@@ -2,7 +2,7 @@
 #include <wiringPi.h>
 #include <alpha_drivers/PCA9685.h>
 
-AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),trim(8,0),rc_in(8,0){
+AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),pid_throttle("throttle"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
   trim[DROP_CH] = 1519;
   trim[ELEVATOR_CH] = 1500;
@@ -40,52 +40,50 @@ void AutoPilot::update(){
     AlphaState &state = current_mode->getAlphaCommand() != AlphaCommand::AUTO_LANDING_CMD() ?
       imu_state : marker_state;//use  marker state on auto landing
     setpoint = automode->get_setpoint(state);
-    float rudder_effort,elevator_effort;
 
-    if(current_mode->getAlphaCommand() != AlphaCommand::AUTO_LANDING_CMD()){
+    float rudder_effort
+    if(current_mode->pid_roll){
       pid_roll.set_setpoint(setpoint.rot.x);
       rudder_effort = pid_roll.update(state.rot.x);
     }
-    else{
+    else if(current_mode->pid_yaw){
       pid_yaw.set_setpoint(setpoint.pos.y);
       rudder_effort = pid_yaw.update(state.pos.y);
     }
-
     
-    if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_LANDING_CMD()){
+    //    if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_LANDING_CMD()){
       /*      if(setpoint.pos.z != -1){
 	pid_z.set_setpoint(setpoint.pos.z);
 	setpoint.rot.y = pid_z.update(state.pos.z);
 
 	}*/
-      pid_pitch.set_setpoint(setpoint.rot.y);
-      elevator_effort = pid_pitch.update(state.rot.y);
-    }
+    float elevator_effort;
 
-
-      
-    else if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_GLIDE_CMD()){
-      pid_pitch.set_setpoint(setpoint.rot.y);
-      elevator_effort = pid_pitch.update(state.rot.y);
-
-    }
-    else{
+    if(current_mode->pid_z){
       pid_z.set_setpoint(setpoint.pos.z);
       setpoint.rot.y = pid_z.update(state.pos.z);
+    }
 
+    if(current_mode->pid_pitch){
       pid_pitch.set_setpoint(setpoint.rot.y);
       elevator_effort = pid_pitch.update(state.rot.y);
+    }
 
-
+    float throttle;
+    if(current_mode->pid_throttle){
+      pid_throttle.set_setpoint(setpoint.pos.z);
+      throttle = NEUTRAL_THROTTLE + pid_throttle.update(state.pos.z)*10;
+      if(throttle > 2000)
+	throttle = 2000;
+      if(throttle < trim[THROTTLE_CH])
+	throttle = trim[THROTTLE_CH];
+    }
+    else{
+      throttle = automode->get_throttle();
     }
     
-    float throttle = automode->get_throttle();
-
     rc_out = compute_auto_rc_out(rudder_effort,elevator_effort,throttle);//use trim 
 
-    //turn on the LED on ch5,and ch2,ch3,ch4,ch5 is only available
-    //TODO : throttle effort may be needed
-    
   }
   else{//manual mode
     rc_out = compute_manual_rc_out(rc_in);
@@ -107,9 +105,9 @@ void AutoPilot::update(){
 std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_effort,float throttle){
   std::vector<int> rc_out = trim;
    rc_out[AUTOPILOT_LED_CH] = 4095;
-   if(throttle!=0)//when throttle is zero, turn of throttle
+   if(throttle!=0)//when throttle is zero, turn off throttle
      rc_out[THROTTLE_CH] = throttle;
-   rc_out[ELEVATOR_CH] += pitch_effort*100;// i think there needs to be a magnitude here
+   rc_out[ELEVATOR_CH] += pitch_effort*100;
    rc_out[RUDDER_CH] += roll_effort*100;
   return rc_out;
 }

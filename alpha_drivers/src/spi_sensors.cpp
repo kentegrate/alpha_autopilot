@@ -11,9 +11,25 @@
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
 
+#include <std_msgs/Empty.h>
+
 #define STATE_INITIAL 1
 #define STATE_WAIT_PRESSURE 2
 #define STATE_WAIT_TEMPERATURE 3
+bool calibrating = false;
+double calib_start_time = 0;
+float yaw_sum= 0;
+int calib_count=0;
+float yaw_offset = 0;
+float add_angle(float ang1, float ang2){//add angles and 
+  // return angles within range from -M_PI to M_PI
+  float ans = ang1+ang2;
+  while(fabsf(ans) > M_PI){
+    ans += ans > 0 ? -2*M_PI : 2*M_PI;
+  }
+  return ans;
+}
+
 double get_dtime(void)
 {
   struct timeval tv;
@@ -29,6 +45,12 @@ geometry_msgs::Vector3 float2VectorMsg(float* data){
   return msg;
 }
 double last_time;
+void calibCB(const std_msgs::Empty::ConstPtr msg){
+  calib_start_time = get_dtime();
+  calibrating = true;
+  yaw_sum = 0;
+  calib_count = 0;
+}
 bool updatePressure(int &state, MS5611 &barometer,float &pressure){
   switch(state){
   case STATE_INITIAL:
@@ -65,6 +87,7 @@ int main(int argc, char* argv[]){
   ros::Publisher imu_pub = nh.advertise<alpha_msgs::IMU>("/imu",10);
   ros::Publisher baro_pub = nh.advertise<alpha_msgs::AirPressure>("/pressure",10);
   //  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
+  ros::Subscriber calib_sub = nh.subscribe("/calibrate",10,calibCB);
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
 
   AltitudeEstimator altitude_est;
@@ -84,11 +107,7 @@ int main(int argc, char* argv[]){
   float gyro[3];
   float mag[3];
   float pressure;
-  /*  std::vector<float> mag_max(3,-99999);
-  std::vector<float> mag_min(3,99999);
-  std::vector<float> mag_bias(3,0);
-  std::vector<float> mag_scale(3,1);
-  int sample_count = 0;*/
+
   while(ros::ok()){
 
     updatePressure(barometer_state,barometer,pressure);
@@ -100,24 +119,7 @@ int main(int argc, char* argv[]){
 		   &gyro[0],&gyro[1],&gyro[2],
 		   &mag[0],&mag[1],&mag[2]);
 
-    /*    float mag_sum=0;
-    for(int i = 0; i < 3; i++){
-      mag_max[i] = mag_max[i] > mag[i] ? mag_max[i] : mag[i];
-      mag_min[i] = mag_min[i] < mag[i] ? mag_min[i] : mag[i];      
-      mag_bias[i] = (mag_max[i]+mag_min[i])/2;
-      mag_scale[i] = (mag_max[i]-mag_min[i])/2;
-      mag_sum+=mag_scale[i];
-    }
-    if(sample_count > 1000){
-      for(int i = 0; i < 3; i++){
-	mag_scale[i] = (mag_sum/3)/mag_scale[i];
-	mag[i] -= mag_bias[i];
-	mag[i] *= mag_scale[i];
-      }
-    }
-    else{
-      sample_count++;
-      }*/
+
     mag[0] = (mag[0]-(-15.71220684))*1.0895;
     mag[1] = (mag[1]-(30.37031364))*1.028659;
     mag[2] = (mag[2]-(-22.31835))*0.90084;
@@ -133,7 +135,7 @@ int main(int argc, char* argv[]){
 			    accel[0],accel[1],accel[2],
                             mag[1],mag[0],-mag[2]);
 
-
+    
 
     
     geometry_msgs::Quaternion quat_msg;
@@ -151,7 +153,18 @@ int main(int argc, char* argv[]){
     float q3 = quat_msg.z;
     pose_msg.roll = atan2(2*(q0*q1+q2*q3),1-2*(q1*q1+q2*q2));
     pose_msg.pitch = asin(2*(q0*q2-q3*q1));
-    pose_msg.yaw = atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3));
+    pose_msg.yaw = add_angle(atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3)),yaw_offset);
+    //the sign might have to be fixed
+    if(calibrating){
+      calib_count++;
+      yaw_sum += pose_msg.yaw;
+      if(get_dtime() > calib_start_time + 3000){
+	yaw_sum/=calib_count;
+	yaw_offset = yaw_sum + M_PI;
+	calibrating = false;
+      }
+    }
+
 
     pose_pub.publish(pose_msg);
     

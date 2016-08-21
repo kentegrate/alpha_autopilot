@@ -13,6 +13,7 @@ static const float land_param = 1.0;
 #define LAND_THROTTLE_ZERO_POINT_X -7
 #define LAND_THROTTLE_ZERO_POINT_Z 1
 #define LAND_THROTTLE_FALL_POINT_X -15
+#define NEUTRAL_THROTTLE 1500
 
 float add_angle(float ang1, float ang2){//add angles and 
   // return angles within range from -M_PI to M_PI
@@ -72,7 +73,7 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   pid_reset = false;
   if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 4){
     phase++;
-    if(phase == 2)
+    if(phase == 2 || phase == 4)
       pid_reset = true;
   }
 
@@ -103,22 +104,13 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
    setpoint.pos.z = initial_state.pos.z;
    aim_rot_z = add_angle(initial_state.rot.z,0);
  }
- else if(phase==4){
+ else{
    setpoint.pos.z = initial_state.pos.z+4;
-   aim_rot_z = add_angle(initial_state.rot.z,M_PI);
- }
- else if(phase==5){
-   setpoint.pos.z = initial_state.pos.z+4;
-   aim_rot_z = add_angle(initial_state.rot.z,M_PI);
- }
- else if(phase==6){
-   setpoint.pos.z = initial_state.pos.z+4;
-   aim_rot_z = add_angle(initial_state.rot.z,0);
  }
  
  pid_reset = false;
  
- if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 7){
+ if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 4){
    phase++;
    if(phase==4)
      pid_reset = true;
@@ -129,12 +121,7 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
   return setpoint;
 }
 float RiseTurn::get_throttle(){
-  if(phase==4){
-    return 1300;
-  }
-  else{ 
-    return initial_rc_in[THROTTLE_CH];
-  }
+  return initial_rc_in[THROTTLE_CH];
 }
 
 

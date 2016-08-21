@@ -16,6 +16,7 @@ class AutoPilot{
   PID pid_pitch;
   PID pid_yaw;
   PID pid_z;
+  PID pid_throttle;
   
   std::vector<int> trim;
   std::vector<int> rc_in;
