@@ -161,7 +161,7 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
     pid_z = true;
     }*/
   
-    //  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
+    setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
   
   pid_reset = false;
   current_state = state;
