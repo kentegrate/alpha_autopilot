@@ -37,9 +37,9 @@
 	  <param name="z/windup_limit" type="double" value="100000.0"/>
 	  <param name="z/cutoff_frequency" type="double" value="25"/>
 
-	  <param name="throttle/Kp" type="double" value="-1.0"/>
-	  <param name="throttle/Ki" type="double" value="0.0"/>
-	  <param name="throttle/Kd" type="double" value="0.0"/>
+	  <param name="throttle/Kp" type="double" value="10.0"/>
+	  <param name="throttle/Ki" type="double" value="1.0"/>
+	  <param name="throttle/Kd" type="double" value="0.25"/>
 	  <param name="throttle/upper_limit" type="double" value="4100"/>
 	  <param name="throttle/lower_limit" type="double" value="-4100"/>
 	  <param name="throttle/windup_limit" type="double" value="1000.0"/>
