@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
     std::vector<float> new_trans(3,0);
     new_trans[0] =pose.pos.x;
     new_trans[1] =pose.pos.y;
-    new_trans[2] =pose.pos.z;
+    new_trans[2] =pose.pos.z+1.505;
 
     //if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
     //	 new_trans[2] < 10 && new_trans[2] > -2))

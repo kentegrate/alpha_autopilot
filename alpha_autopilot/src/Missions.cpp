@@ -13,7 +13,7 @@ static const float land_param = 1.0;
 #define LAND_THROTTLE_ZERO_POINT_X -7
 #define LAND_THROTTLE_ZERO_POINT_Z 1
 #define LAND_THROTTLE_FALL_POINT_X -15
-#define NEUTRAL_THROTTLE 1500
+
 
 float add_angle(float ang1, float ang2){//add angles and 
   // return angles within range from -M_PI to M_PI
@@ -65,7 +65,7 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   }
   else if(phase == 3){
     setpoint.rot.x = -MAX_ROLL_SETPOINT;
-    aim_rot_z = add_angle(initial_state.rot.z,M_PI/3);
+    aim_rot_z = add_angle(initial_state.rot.z,-M_PI/3);
   }
   else{
     setpoint.rot.x = 0;
@@ -105,6 +105,7 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
    aim_rot_z = add_angle(initial_state.rot.z,0);
  }
  else{
+   pid_throttle = true;
    setpoint.pos.z = initial_state.pos.z+4;
  }
  
@@ -139,25 +140,22 @@ float Glide::get_throttle(){
 
 AlphaState Land::get_setpoint(AlphaState state){//marker state
   AlphaState setpoint;
-  /*  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
+  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
     setpoint.rot.y = -3*M_PI/180;
-    setpoint.pos.z = -1;//disabled
+    pid_throttle = false;
+    pid_z = false;
   }
   else{
-    setpoint.rot.y = -1;//disabled
     float x0 = initial_state.pos.x;
     float z0 = initial_state.pos.z;
     float x1 = LAND_THROTTLE_ZERO_POINT_X;
     float z1 = LAND_THROTTLE_ZERO_POINT_Z;
     setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
-    }*/
-  setpoint.rot.y = 0;
-    
+    pid_throttle = true;
+    pid_z = true;
+  }
   
-  //  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
-  
-  setpoint.pos.y = 0;
-  //according to the plus and minus of yaw.
+  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
   
   pid_reset = false;
   current_state = state;

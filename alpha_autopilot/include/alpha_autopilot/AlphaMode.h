@@ -6,7 +6,7 @@
 #define THROTTLE_CH 2
 #define RUDDER_CH 3
 #define AUTOPILOT_LED_CH 4
-
+#define NEUTRAL_THROTTLE 1500
 
 #include <alpha_autopilot/AlphaCommand.h>
 #include <alpha_autopilot/Types.h>
@@ -94,7 +94,7 @@ class HorizontalTurn : public AutoMode{
     pid_yaw = false;
     pid_z = true;
     pid_pitch = true;
-    pid_throttle = true;
+    pid_throttle = false;
 
   }
   AlphaState get_setpoint(AlphaState state);
@@ -110,7 +110,7 @@ class EightTurn : public AutoMode{
     pid_yaw = false;
     pid_z = true;
     pid_pitch = true;
-    pid_throttle = true;
+    pid_throttle = false;
 
   }
   AlphaState get_setpoint(AlphaState state);
@@ -126,7 +126,7 @@ class RiseTurn : public AutoMode{
     pid_yaw = false;
     pid_z = true;
     pid_pitch = true;
-    pid_throttle = true;
+    pid_throttle = false;
 }
   AlphaState get_setpoint(AlphaState state);
     float get_throttle();

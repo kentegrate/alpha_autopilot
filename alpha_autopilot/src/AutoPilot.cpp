@@ -36,17 +36,18 @@ void AutoPilot::update(){
       pid_pitch.initialize();
       pid_z.initialize();
       pid_yaw.initialize();
+      pid_throttle.initialize();
     }
     AlphaState &state = current_mode->getAlphaCommand() != AlphaCommand::AUTO_LANDING_CMD() ?
       imu_state : marker_state;//use  marker state on auto landing
     setpoint = automode->get_setpoint(state);
 
-    float rudder_effort
-    if(current_mode->pid_roll){
+    float rudder_effort;
+    if(automode->pid_roll){
       pid_roll.set_setpoint(setpoint.rot.x);
       rudder_effort = pid_roll.update(state.rot.x);
     }
-    else if(current_mode->pid_yaw){
+    else if(automode->pid_yaw){
       pid_yaw.set_setpoint(setpoint.pos.y);
       rudder_effort = pid_yaw.update(state.pos.y);
     }
@@ -59,18 +60,18 @@ void AutoPilot::update(){
 	}*/
     float elevator_effort;
 
-    if(current_mode->pid_z){
+    if(automode->pid_z){
       pid_z.set_setpoint(setpoint.pos.z);
       setpoint.rot.y = pid_z.update(state.pos.z);
     }
 
-    if(current_mode->pid_pitch){
+    if(automode->pid_pitch){
       pid_pitch.set_setpoint(setpoint.rot.y);
       elevator_effort = pid_pitch.update(state.rot.y);
     }
 
     float throttle;
-    if(current_mode->pid_throttle){
+    if(automode->pid_throttle){
       pid_throttle.set_setpoint(setpoint.pos.z);
       throttle = NEUTRAL_THROTTLE + pid_throttle.update(state.pos.z)*10;
       if(throttle > 2000)
