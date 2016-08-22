@@ -48,8 +48,8 @@ void AutoPilot::update(){
       rudder_effort = pid_roll.update(state.rot.x);
     }
     else if(automode->pid_yaw){
-      pid_yaw.set_setpoint(setpoint.pos.y);
-      rudder_effort = pid_yaw.update(state.pos.y);
+      pid_yaw.set_setpoint(setpoint.rot.z);
+      rudder_effort = pid_yaw.update(state.rot.z);
     }
     
     //    if(current_mode->getAlphaCommand() == AlphaCommand::AUTO_LANDING_CMD()){
