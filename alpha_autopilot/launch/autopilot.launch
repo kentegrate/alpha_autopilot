@@ -30,8 +30,8 @@
 	  <param name="yaw/cutoff_frequency" type="double" value="25"/>
 
 	  <param name="z/Kp" type="double" value="-0.26"/>
-	  <param name="z/Ki" type="double" value="-0.4"/>
-	  <param name="z/Kd" type="double" value="-0.1"/>
+	  <param name="z/Ki" type="double" value="-0.2"/>
+	  <param name="z/Kd" type="double" value="-0.05"/>
 	  <param name="z/upper_limit" type="double" value="0.4"/>
 	  <param name="z/lower_limit" type="double" value="-0.4"/>
 	  <param name="z/windup_limit" type="double" value="100000.0"/>

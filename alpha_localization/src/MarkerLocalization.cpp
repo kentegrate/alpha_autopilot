@@ -262,6 +262,7 @@ Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   //  for(int i = 0; i < imagePoints.size(); i++)
   //    std::cout<<imagePoints[i]<<std::endl;
   Mat ahrs_rvec = (cv::Mat_<float>(3,1) << (float)(-ahrs_euler.y),(float)(-ahrs_euler.z),(float)(ahrs_euler.x));
+  //  Mat ahrs_rvec = (cv::Mat_<float>(3,1) << (float)(-ahrs_euler.y),0,(float)(ahrs_euler.x));
   Mat rvec;
   ahrs_rvec.copyTo(rvec);
   Mat ahrs_R;

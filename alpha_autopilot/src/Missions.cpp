@@ -67,7 +67,7 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   }
   else if(phase == 3){
     setpoint.rot.x = -MAX_ROLL_SETPOINT;
-    aim_rot_z = add_angle(initial_state.rot.z,-M_PI/3);
+    aim_rot_z = add_angle(initial_state.rot.z,-M_PI/6);
   }
   else{
     setpoint.rot.x = 0;
@@ -135,7 +135,7 @@ float RiseTurn::get_throttle(){
 AlphaState Glide::get_setpoint(AlphaState state){
   AlphaState setpoint;
   setpoint.rot.x = MIN_ROLL_SETPOINT;
-  setpoint.rot.y = -0.1;
+  setpoint.rot.y = -0.3;
   pid_reset = false;
   return setpoint;
 }
