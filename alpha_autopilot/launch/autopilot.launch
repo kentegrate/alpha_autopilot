@@ -14,8 +14,8 @@
 	  <param name="roll/cutoff_frequency" type="double" value="25"/>
 
 	  <param name="pitch/Kp" type="double" value="5.0"/>
-	  <param name="pitch/Ki" type="double" value="0.01"/>
-	  <param name="pitch/Kd" type="double" value="0.0025"/>
+	  <param name="pitch/Ki" type="double" value="0.1"/>
+	  <param name="pitch/Kd" type="double" value="0.025"/>
 	  <param name="pitch/upper_limit" type="double" value="4.100"/>
 	  <param name="pitch/lower_limit" type="double" value="-4.100"/>
 	  <param name="pitch/windup_limit" type="double" value="100.0"/>
