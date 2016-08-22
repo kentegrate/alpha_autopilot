@@ -12,9 +12,9 @@ static const float land_param = 1.0;
 
 #define MIN_ROLL_SETPOINT 0.1
 
-#define LAND_THROTTLE_ZERO_POINT_X -7
+#define LAND_THROTTLE_ZERO_POINT_X 10
 #define LAND_THROTTLE_ZERO_POINT_Z 1
-#define LAND_THROTTLE_FALL_POINT_X -15
+#define LAND_THROTTLE_FALL_POINT_X 15
 
 
 float add_angle(float ang1, float ang2){//add angles and 
