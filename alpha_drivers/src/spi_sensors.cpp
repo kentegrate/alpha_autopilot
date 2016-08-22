@@ -10,6 +10,7 @@
 #include <alpha_msgs/FilteredState.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
+#include <sensor_msgs/Imu.h>
 
 #include <std_msgs/Empty.h>
 
@@ -89,6 +90,7 @@ int main(int argc, char* argv[]){
   //  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
   ros::Subscriber calib_sub = nh.subscribe("/calibrate",10,calibCB);
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
+  ros::Publisher imu_rviz_pub = nh.advertise<sensor_msgs::Imu>("/imu_rviz",10);
 
   AltitudeEstimator altitude_est;
   altitude_est.init();
@@ -143,6 +145,11 @@ int main(int argc, char* argv[]){
     quat_msg.y = (double)ahrs.q2;
     quat_msg.z = (double)ahrs.q3;
     quat_msg.w = (double)ahrs.q0;
+
+    sensor_msgs::Imu rviz_imu_msg;
+    rviz_imu_msg.orientation = quat_msg;
+    rviz_imu_msg.header.frame_id = "/map";
+    imu_rviz_pub.publish(rviz_imu_msg);
     
     float z = altitude_est.update(quat_msg,imu_msg,baro_msg);
     alpha_msgs::FilteredState pose_msg;
@@ -153,6 +160,8 @@ int main(int argc, char* argv[]){
     float q3 = quat_msg.z;
     pose_msg.roll = atan2(2*(q0*q1+q2*q3),1-2*(q1*q1+q2*q2));
     pose_msg.pitch = asin(2*(q0*q2-q3*q1));
+    if(calibrating)
+      yaw_offset = 0;
     pose_msg.yaw = add_angle(atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3)),-yaw_offset);
     //the sign might have to be fixed
     if(calibrating){
@@ -160,8 +169,9 @@ int main(int argc, char* argv[]){
       yaw_sum += pose_msg.yaw;
       if(get_dtime() > calib_start_time + 3000){
 	yaw_sum/=calib_count;
-	yaw_offset = yaw_sum + M_PI;
+	yaw_offset = add_angle(yaw_sum,M_PI);
 	calibrating = false;
+	std::cout<<"yaw offset "<<yaw_offset<<std::endl;
       }
     }
 
