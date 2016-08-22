@@ -120,9 +120,9 @@ int main(int argc, char* argv[]){
 		   &mag[0],&mag[1],&mag[2]);
 
 
-    mag[0] = (mag[0]-(-14.20312381))*1.000348321
-    mag[1] = (mag[1]-(35.7140657))*0.965438471
-    mag[2] = (mag[2]-(-22.57587933))*1.036753524
+    mag[0] = (mag[0]-(-14.20312381))*1.000348321;
+    mag[1] = (mag[1]-(35.7140657))*0.965438471;
+    mag[2] = (mag[2]-(-22.57587933))*1.036753524;
     alpha_msgs::IMU imu_msg;
     imu_msg.linear_acceleration = float2VectorMsg(accel);
     imu_msg.angular_velocity    = float2VectorMsg(gyro);
