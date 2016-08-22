@@ -113,8 +113,12 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
  
  if(in_range(aim_rot_z,state.rot.z,angle_error_range) && phase < 4){
    phase++;
-   if(phase==4)
+   
+   if(phase==4){
      pid_reset = true;
+     initial_state = state;
+   }
+   
  }
  
 

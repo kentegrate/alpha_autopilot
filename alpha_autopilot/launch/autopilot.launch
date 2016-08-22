@@ -42,7 +42,7 @@
 	  <param name="throttle/Kd" type="double" value="0.0"/>
 	  <param name="throttle/upper_limit" type="double" value="4100"/>
 	  <param name="throttle/lower_limit" type="double" value="-4100"/>
-	  <param name="throttle/windup_limit" type="double" value="100.0"/>
+	  <param name="throttle/windup_limit" type="double" value="1000.0"/>
 	  <param name="throttle/cutoff_frequency" type="double" value="25"/>
 
 
