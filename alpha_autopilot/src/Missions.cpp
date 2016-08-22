@@ -8,8 +8,8 @@ static const float landing_throttle_off_distance = 17;
 static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
 static const float land_param = 1.0;
-#define MAX_ROLL_SETPOINT 0.4
-#define MIN_ROLL_SETPOINT 0.3
+#define MAX_ROLL_SETPOINT 0.3
+#define MIN_ROLL_SETPOINT 0.25
 #define LAND_THROTTLE_ZERO_POINT_X -7
 #define LAND_THROTTLE_ZERO_POINT_Z 1
 #define LAND_THROTTLE_FALL_POINT_X -15
