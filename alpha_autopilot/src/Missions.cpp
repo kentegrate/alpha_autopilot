@@ -146,22 +146,22 @@ float Glide::get_throttle(){
 
 AlphaState Land::get_setpoint(AlphaState state){//marker state
   AlphaState setpoint;
-  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
+  //  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
     setpoint.rot.y = -3*M_PI/180;
     pid_throttle = false;
     pid_z = false;
-  }
-  else{
+    //  }
+  /*  else{
     float x0 = initial_state.pos.x;
     float z0 = initial_state.pos.z;
     float x1 = LAND_THROTTLE_ZERO_POINT_X;
     float z1 = LAND_THROTTLE_ZERO_POINT_Z;
     setpoint.pos.z = ((z0-z1)*state.pos.x+z1*x0-z0*x1)/(x0-x1);
-    pid_throttle = true;
+    pid_throttle = false;
     pid_z = true;
-  }
+    }*/
   
-  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
+    //  setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
   
   pid_reset = false;
   current_state = state;
