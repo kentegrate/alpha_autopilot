@@ -135,7 +135,7 @@ float RiseTurn::get_throttle(){
 AlphaState Glide::get_setpoint(AlphaState state){
   AlphaState setpoint;
   setpoint.rot.x = MIN_ROLL_SETPOINT;
-  setpoint.rot.y = -0.05;
+  setpoint.rot.y = -0.1;
   pid_reset = false;
   return setpoint;
 }

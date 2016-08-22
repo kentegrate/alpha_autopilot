@@ -153,7 +153,7 @@ int main(int argc, char* argv[]){
     float q3 = quat_msg.z;
     pose_msg.roll = atan2(2*(q0*q1+q2*q3),1-2*(q1*q1+q2*q2));
     pose_msg.pitch = asin(2*(q0*q2-q3*q1));
-    pose_msg.yaw = add_angle(atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3)),yaw_offset);
+    pose_msg.yaw = add_angle(atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3)),-yaw_offset);
     //the sign might have to be fixed
     if(calibrating){
       calib_count++;
