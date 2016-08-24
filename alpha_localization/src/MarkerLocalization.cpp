@@ -7,13 +7,9 @@ MarkerLocalization::MarkerLocalization(){
   
 }
 void MarkerLocalization::init(){
-  ahrs_sub = private_nh.subscribe("/pose",10,&MarkerLocalization::ahrsCB,this);
+
 }
-void MarkerLocalization::ahrsCB(const alpha_msgs::FilteredState::ConstPtr msg){
-  ahrs_euler.x = msg->roll;
-  ahrs_euler.y = msg->pitch;
-  ahrs_euler.z = msg->yaw;
-}
+
 void MarkerLocalization::loadMarkerPosition(){
   std::vector<std::vector<double> > marker_corners;
   for(int i = 0; i < 8; i++){
@@ -261,13 +257,15 @@ Pose MarkerLocalization::solvePose(std::vector<Point2f> &corners){
   //  projectPoints(objectPoints,rvec,tvec,camMatrix,distCoeffs,imagePoints);
   //  for(int i = 0; i < imagePoints.size(); i++)
   //    std::cout<<imagePoints[i]<<std::endl;
-  Mat ahrs_rvec = (cv::Mat_<float>(3,1) << (float)(-ahrs_euler.y),(float)(-ahrs_euler.z),(float)(ahrs_euler.x));
   //  Mat ahrs_rvec = (cv::Mat_<float>(3,1) << (float)(-ahrs_euler.y),0,(float)(ahrs_euler.x));
   Mat rvec;
-  ahrs_rvec.copyTo(rvec);
-  Mat ahrs_R;
-  cv::Rodrigues(ahrs_rvec,ahrs_R);
-  Mat tvec = -camera_t - ahrs_R*t;
+  //  ahrs_rvec.copyTo(rvec);
+  R = R.t();
+  cv::Rodrigues(R,rvec);
+  //  Mat ahrs_R;
+  //  cv::Rodrigues(ahrs_rvec,ahrs_R);
+  //  Mat tvec = -camera_t - ahrs_R*t;
+  Mat tvec = -camera_t - R*t;
 
 
   //  pose.rot = ahrs_euler;
