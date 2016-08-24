@@ -7,7 +7,7 @@ static const float angle_error_range = 0.2;//rad
 static const float landing_throttle_off_distance = 17;
 static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
-static const float land_param = 1.0;
+static const float land_param = 3.0;
 #define MAX_ROLL_SETPOINT 0.3
 
 #define MIN_ROLL_SETPOINT 0.1
