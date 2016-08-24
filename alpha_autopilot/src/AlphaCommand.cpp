@@ -56,8 +56,8 @@ AlphaMode* AlphaCommand::getMode(AlphaMode* current_mode, AlphaState imu_state, 
     new_mode = new Glide(imu_state,(*this));
   else if(AlphaCommand::AUTO_LANDING_CMD() == new_alpha_cmd)
     new_mode = new Land(marker_state,(*this));
-  else if(AlphaCommand::SET_TRIM_CMD() == new_alpha_cmd)
-    new_mode = new SetTrim;
+  else if(AlphaCommand::DROP_CMD() == new_alpha_cmd)
+    new_mode = new Drop;
   else if(AlphaCommand::CALIBRATE_CMD() == new_alpha_cmd)
     new_mode = new Calibrate;
   else if(AlphaCommand::SHUTDOWN_CMD() == new_alpha_cmd){//shutdown

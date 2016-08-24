@@ -45,7 +45,7 @@ struct AlphaCommand{
 		     LogicLevel::HIGH,LogicLevel::MID,LogicLevel::MID,LogicLevel::NONE);
     return cmd;
   }
-  AlphaCommand static SET_TRIM_CMD(){
+  AlphaCommand static DROP_CMD(){
     AlphaCommand cmd(LogicLevel::NONE,LogicLevel::NONE,LogicLevel::NONE,LogicLevel::NONE,
 		     LogicLevel::LOW,LogicLevel::NONE,LogicLevel::NONE,LogicLevel::HIGH);
     return cmd;

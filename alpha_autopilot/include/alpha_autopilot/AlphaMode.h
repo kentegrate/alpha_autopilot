@@ -7,6 +7,10 @@
 #define RUDDER_CH 3
 #define AUTOPILOT_LED_CH 4
 #define NEUTRAL_THROTTLE 1500
+#define INITIAL_DROP_PULSE 1100
+#define DROP_INC_PULSE 200
+#define DROP_MAX_PULSE 1900
+#define DROP_MIN_PULSE 1100
 
 #include <alpha_autopilot/AlphaCommand.h>
 #include <alpha_autopilot/Types.h>
@@ -37,12 +41,24 @@ class ManualMode : public AlphaMode{
     return false;
   }
 };
-class SetTrim : public ManualMode{
+class Drop : public ManualMode{
  public:
-  SetTrim(){}
-  AlphaCommand getAlphaCommand(){
-    return AlphaCommand::SET_TRIM_CMD();
+  Drop(){
+    is_initial = true;
   }
+  AlphaCommand getAlphaCommand(){
+    return AlphaCommand::DROP_CMD();
+  }
+  bool isInitial(){
+    if(is_initial){
+      is_initial = false;
+      return true;
+    }
+    else
+      return false;
+  }
+ private:
+  bool is_initial;
 };
 class Calibrate : public ManualMode{
  public:

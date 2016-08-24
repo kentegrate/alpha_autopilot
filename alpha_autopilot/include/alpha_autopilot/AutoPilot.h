@@ -27,6 +27,8 @@ class AutoPilot{
   ros::Publisher rcout_pub;
   ros::Subscriber state_sub;
   ros::Subscriber marker_state_sub;
+
+  int drop_state;
   
   AlphaState imu_state;
   AlphaState marker_state;

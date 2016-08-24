@@ -2,9 +2,24 @@
 #include <wiringPi.h>
 #include <alpha_drivers/PCA9685.h>
 
+int computeDropPulse(int drop_state){
+  int drop_pulse;
+
+  if(drop_state == 0)
+    drop_pulse = 2088;
+  else if(drop_state == 1 || drop_state == 5)
+    drop_pulse = 1861;
+  else if(drop_state == 2 || drop_state == 4)
+    drop_pulse = 1593;
+  else if(drop_state == 3)
+    drop_pulse = 1220;
+
+  return drop_pulse;
+}
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),pid_throttle("throttle"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
-  trim[DROP_CH] = 1519;
+  drop_state = 0;
+  trim[DROP_CH] = 2088;
   trim[ELEVATOR_CH] = 1500;
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
@@ -92,17 +107,21 @@ void AutoPilot::update(){
 
   }
   else{//manual mode
-    rc_out = compute_manual_rc_out(rc_in);
-    //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
-    if(current_mode->getAlphaCommand() == AlphaCommand::SET_TRIM_CMD()){
-      rc_out[DROP_CH]= 1034;
-    }
 
+    //turn off the LED on ch5,and ch2,ch3,ch4,ch5 is only available
+    if(current_mode->getAlphaCommand() == AlphaCommand::DROP_CMD()){
+      Drop* dropmode = static_cast<Drop*>(current_mode);
+      if(dropmode->isInitial()){
+	drop_state += 1;
+	if(drop_state > 5)
+	  drop_state = 0;
+      }
+    }
     else if(current_mode->getAlphaCommand() == AlphaCommand::CALIBRATE_CMD()){
       send_calibrate_request();
       trim = rc_in;
     }
-	    
+    rc_out = compute_manual_rc_out(rc_in);	    
   }
 
   setRCOut(rc_out);
@@ -110,6 +129,8 @@ void AutoPilot::update(){
 }
 std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_effort,float throttle){
   std::vector<int> rc_out = trim;
+
+  rc_out[DROP_CH]= computeDropPulse(drop_state);
    rc_out[AUTOPILOT_LED_CH] = 4095;
    if(throttle!=0)//when throttle is zero, turn off throttle
      rc_out[THROTTLE_CH] = throttle;
@@ -119,7 +140,8 @@ std::vector<int> AutoPilot::compute_auto_rc_out(float roll_effort,float pitch_ef
 }
 std::vector<int> AutoPilot::compute_manual_rc_out(std::vector<int> rc_in){
   std::vector<int> rc_out= rc_in;
-  rc_out[DROP_CH] = trim[DROP_CH];
+
+  rc_out[DROP_CH]= computeDropPulse(drop_state);
   rc_out[AUTOPILOT_LED_CH] = 0;
   return rc_out;
 }
