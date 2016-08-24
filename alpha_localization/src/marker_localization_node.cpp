@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
     std::vector<float> new_trans(3,0);
     new_trans[0] =pose.pos.x;
     new_trans[1] =pose.pos.y;
-    new_trans[2] =pose.pos.z+3.05;
+    new_trans[2] =pose.pos.z+1.505;
 
     //if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
     //	 new_trans[2] < 10 && new_trans[2] > -2))
@@ -124,9 +124,9 @@ int main(int argc, char* argv[]){
     msg.x = trans[0];
     msg.y = trans[1];
     msg.z = trans[2];
-    msg.roll = euler[0];
-    msg.pitch = euler[1];
-    msg.yaw = euler[2];
+    msg.roll = new_euler[0];
+    msg.pitch = new_euler[1];
+    msg.yaw = new_euler[2];
     pose_pub.publish(msg);
     ros::spinOnce();
     //    pose.print();

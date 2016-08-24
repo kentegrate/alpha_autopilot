@@ -13,7 +13,7 @@ static const float land_param = 3.0;
 #define MIN_ROLL_SETPOINT 0.1
 
 
-#define LAND_THROTTLE_ZERO_POINT_X 15
+#define LAND_THROTTLE_ZERO_POINT_X 10
 
 #define LAND_THROTTLE_ZERO_POINT_Z 1
 #define LAND_THROTTLE_FALL_POINT_X 15
@@ -149,7 +149,7 @@ float Glide::get_throttle(){
 AlphaState Land::get_setpoint(AlphaState state){//marker state
   AlphaState setpoint;
   //  if(fabsf(state.pos.x)<fabsf(LAND_THROTTLE_ZERO_POINT_X)){
-  setpoint.rot.y = -0.4;
+  setpoint.rot.y = 0.0;
     pid_throttle = false;
     pid_z = false;
     //  }
@@ -163,8 +163,8 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
     pid_z = true;
     }*/
   
-    setpoint.rot.z = atan(state.pos.y/land_param);//this may need to be rotated
-  
+    setpoint.rot.z = -atan(state.pos.y/land_param);//this may need to be rotated
+
   pid_reset = false;
   current_state = state;
   return setpoint;

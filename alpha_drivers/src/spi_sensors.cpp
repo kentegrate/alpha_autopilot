@@ -10,25 +10,13 @@
 #include <alpha_msgs/FilteredState.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
+#include <sensor_msgs/Imu.h>
 
 #include <std_msgs/Empty.h>
 
 #define STATE_INITIAL 1
 #define STATE_WAIT_PRESSURE 2
 #define STATE_WAIT_TEMPERATURE 3
-bool calibrating = false;
-double calib_start_time = 0;
-float yaw_sum= 0;
-int calib_count=0;
-float yaw_offset = 0;
-float add_angle(float ang1, float ang2){//add angles and 
-  // return angles within range from -M_PI to M_PI
-  float ans = ang1+ang2;
-  while(fabsf(ans) > M_PI){
-    ans += ans > 0 ? -2*M_PI : 2*M_PI;
-  }
-  return ans;
-}
 
 double get_dtime(void)
 {
@@ -45,12 +33,7 @@ geometry_msgs::Vector3 float2VectorMsg(float* data){
   return msg;
 }
 double last_time;
-void calibCB(const std_msgs::Empty::ConstPtr msg){
-  calib_start_time = get_dtime();
-  calibrating = true;
-  yaw_sum = 0;
-  calib_count = 0;
-}
+
 bool updatePressure(int &state, MS5611 &barometer,float &pressure){
   switch(state){
   case STATE_INITIAL:
@@ -87,8 +70,8 @@ int main(int argc, char* argv[]){
   ros::Publisher imu_pub = nh.advertise<alpha_msgs::IMU>("/imu",10);
   ros::Publisher baro_pub = nh.advertise<alpha_msgs::AirPressure>("/pressure",10);
   //  ros::Publisher ahrs_pub = nh.advertise<geometry_msgs::Quaternion>("/ahrs",10);
-  ros::Subscriber calib_sub = nh.subscribe("/calibrate",10,calibCB);
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/pose",10);
+  ros::Publisher imu_rviz_pub = nh.advertise<sensor_msgs::Imu>("/imu_rviz",10);
 
   AltitudeEstimator altitude_est;
   altitude_est.init();
@@ -143,6 +126,11 @@ int main(int argc, char* argv[]){
     quat_msg.y = (double)ahrs.q2;
     quat_msg.z = (double)ahrs.q3;
     quat_msg.w = (double)ahrs.q0;
+
+    sensor_msgs::Imu rviz_imu_msg;
+    rviz_imu_msg.orientation = quat_msg;
+    rviz_imu_msg.header.frame_id = "/map";
+    imu_rviz_pub.publish(rviz_imu_msg);
     
     float z = altitude_est.update(quat_msg,imu_msg,baro_msg);
     alpha_msgs::FilteredState pose_msg;
@@ -153,17 +141,7 @@ int main(int argc, char* argv[]){
     float q3 = quat_msg.z;
     pose_msg.roll = atan2(2*(q0*q1+q2*q3),1-2*(q1*q1+q2*q2));
     pose_msg.pitch = asin(2*(q0*q2-q3*q1));
-    pose_msg.yaw = add_angle(atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3)),-yaw_offset);
-    //the sign might have to be fixed
-    if(calibrating){
-      calib_count++;
-      yaw_sum += pose_msg.yaw;
-      if(get_dtime() > calib_start_time + 3000){
-	yaw_sum/=calib_count;
-	yaw_offset = yaw_sum + M_PI;
-	calibrating = false;
-      }
-    }
+    pose_msg.yaw = atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3));
 
 
     pose_pub.publish(pose_msg);

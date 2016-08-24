@@ -34,20 +34,18 @@ struct Pose{
 };
 class MarkerLocalization{
  private:
-  ros::Subscriber ahrs_sub;
+
   ros::NodeHandle private_nh;
   std::vector<Point3f> objectPoints;
 
   
   Mat camMatrix;
   Mat distCoeffs;
-  Vector3 ahrs_euler;
   Mat camera_t;
   
  public:
   MarkerLocalization();
   void init();
-  void ahrsCB(const alpha_msgs::FilteredState::ConstPtr msg);
   void loadMarkerPosition();
   void getCVCorners(Mat &input, std::vector<Point2f> &corners,Mat &debug_image);
   void loadCameraInfo();
