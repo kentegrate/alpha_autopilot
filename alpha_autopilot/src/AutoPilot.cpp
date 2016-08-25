@@ -62,7 +62,7 @@ void AutoPilot::update(){
   
   setpoint = automode->get_setpoint(state);
 
-    float rudder_effort;
+    float rudder_effort = 0;
     if(automode->pid_roll){
       pid_roll.set_setpoint(setpoint.rot.x);
       rudder_effort = pid_roll.update(state.rot.x);
@@ -78,7 +78,7 @@ void AutoPilot::update(){
 	setpoint.rot.y = pid_z.update(state.pos.z);
 
 	}*/
-    float elevator_effort;
+    float elevator_effort = 0;
 
     if(automode->pid_z){
       pid_z.set_setpoint(setpoint.pos.z);
