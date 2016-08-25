@@ -6,20 +6,20 @@ int computeDropPulse(int drop_state){
   int drop_pulse;
 
   if(drop_state == 0)
-    drop_pulse = 2088;
+    drop_pulse = 2094;
   else if(drop_state == 1 || drop_state == 5)
-    drop_pulse = 1861;
+    drop_pulse = 1873;
   else if(drop_state == 2 || drop_state == 4)
-    drop_pulse = 1593;
+    drop_pulse = 1577;
   else if(drop_state == 3)
-    drop_pulse = 1220;
+    drop_pulse = 1200;
 
   return drop_pulse;
 }
 AutoPilot::AutoPilot() : pid_roll("roll"),pid_pitch("pitch"),pid_yaw("yaw"),pid_z("z"),pid_throttle("throttle"),trim(8,0),rc_in(8,0){
   current_mode = new ManualMode;
   drop_state = 0;
-  trim[DROP_CH] = 2088;
+  trim[DROP_CH] = 2094;
   trim[ELEVATOR_CH] = 1500;
   trim[THROTTLE_CH] = 1100;
   trim[RUDDER_CH] = 1500;
