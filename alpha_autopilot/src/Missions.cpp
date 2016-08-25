@@ -4,10 +4,10 @@
 #include <iostream>
 
 static const float angle_error_range = 0.2;//rad
-static const float landing_throttle_off_distance = 17;
+
 static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
-static const float land_param = 3.0;
+static const float land_param = 8.0;
 #define MAX_ROLL_SETPOINT 0.3
 
 #define MIN_ROLL_SETPOINT 0.1
@@ -110,7 +110,7 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
  }
  else{
    pid_throttle = true;
-   setpoint.pos.z = initial_state.pos.z+4;
+   setpoint.pos.z = initial_state.pos.z+5;
  }
  
  pid_reset = false;
