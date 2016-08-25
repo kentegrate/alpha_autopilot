@@ -10,7 +10,7 @@ static const float land_pos_x = 6.0;
 static const float land_param = 8.0;
 #define MAX_ROLL_SETPOINT 0.3
 
-#define MIN_ROLL_SETPOINT 0.1
+#define MIN_ROLL_SETPOINT 0.3
 
 
 #define LAND_THROTTLE_ZERO_POINT_X 11
