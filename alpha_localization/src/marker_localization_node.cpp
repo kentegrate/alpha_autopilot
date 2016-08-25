@@ -11,6 +11,8 @@ bool running = true;
 RaspiCam input;
 float k_q = 0.2;
 float k_t = 0.2;
+double last_valid_time = 0;
+
 void quaternion_to_euler(float* q,float* euler){
   euler[0] = atan2(2*(q[0]*q[1]+q[2]*q[3]),1-2*(q[1]*q[1]+q[2]*q[2]));
   euler[1] = asin(2*(q[0]*q[2]-q[3]*q[1]));
@@ -38,10 +40,23 @@ double get_dtime(void)
 {
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  //ミリ秒を計算
-  return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); //★
+  //calculate ms
+  return ((double)(tv.tv_sec)*1000 + (double)(tv.tv_usec)*0.001); 
+}
+bool invalid_long(){
+  return get_dtime() > last_valid_time + 500;
 }
 int main(int argc, char* argv[]){
+
+  alpha_msgs::FilteredState zero_msg;
+
+  zero_msg.x = 0;
+  zero_msg.y = 0;
+  zero_msg.z = 0;
+  zero_msg.roll = 0;
+  zero_msg.pitch = 0;
+  zero_msg.yaw = 0;
+
   ros::init(argc,argv,"marker_localization_node",ros::init_options::NoSigintHandler);
   ros::NodeHandle nh;
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/marker_pose",10);
@@ -66,8 +81,6 @@ int main(int argc, char* argv[]){
   ml.loadMarkerPosition();
   ml.loadCameraInfo();
 
-  //  namedWindow("detection_result");
-  //  startWindowThread();
 
   std::vector<float> q(4,0);
   q[0] = 1;
@@ -83,8 +96,18 @@ int main(int argc, char* argv[]){
     ml.getCVCorners(image,corners,debug_image);
     //    sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(),"mono8",debug_image).toImageMsg();
     //    image_pub.publish(image_msg);
-    if(corners.size() < 4)
+
+    //
+
+
+    if(corners.size() < 4){
+      if(invalid_long()){
+	pose_pub.publish(zero_msg);
+      }
       continue;
+    }
+
+
     
     Pose pose;
     ml.sortCorners(corners);
@@ -102,9 +125,15 @@ int main(int argc, char* argv[]){
     new_trans[1] =pose.pos.y;
     new_trans[2] =pose.pos.z+1.505;
 
-    //if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
-    //	 new_trans[2] < 10 && new_trans[2] > -2))
-    //	 continue;
+    if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
+	 (fabsf(new_trans[1]) < 20) &&
+	 (fabsf(new_trans[1]) < 15))){
+      if(invalid_long()){
+	pose_pub.publish(zero_msg);
+      }
+      continue;
+    }
+
     euler_to_quaternion(&new_euler[0],&new_q[0]);
     float q_sum = 0;
     for(int i = 0; i < 4; i++){
@@ -128,6 +157,7 @@ int main(int argc, char* argv[]){
     msg.pitch = new_euler[1];
     msg.yaw = new_euler[2];
     pose_pub.publish(msg);
+    last_valid_time = get_dtime();
     ros::spinOnce();
     //    pose.print();
 

@@ -15,9 +15,6 @@ static const float land_param = 8.0;
 
 #define LAND_THROTTLE_ZERO_POINT_X 11
 
-#define LAND_THROTTLE_ZERO_POINT_Z 1
-#define LAND_THROTTLE_FALL_POINT_X 15
-
 
 float add_angle(float ang1, float ang2){//add angles and 
   // return angles within range from -M_PI to M_PI
@@ -175,10 +172,7 @@ float Land::get_throttle(){
     return 0;
   else 
     return initial_rc_in[THROTTLE_CH];
-  /*  else
-    return (initial_rc_in[THROTTLE_CH])*
-      (dist_marker-LAND_THROTTLE_ZERO_POINT_X)/
-      (LAND_THROTTLE_FALL_POINT_X-LAND_THROTTLE_ZERO_POINT_X);*/
+
 }
 
 
