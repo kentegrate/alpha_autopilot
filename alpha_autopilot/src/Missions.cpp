@@ -163,7 +163,7 @@ AlphaState Land::get_setpoint(AlphaState state){//marker state
     setpoint.rot.z = -atan(state.pos.y/land_param);//this may need to be rotated
   pid_reset = false;
 
-  if(setpoint.pos.x == 0 && setpoint.pos.y == 0 && setpoint.pos.z == 0){//marker is invisible
+  if(state.pos.x == 0 && state.pos.y == 0 && state.pos.z == 0){//marker is invisible
       pid_yaw = false;
   }
     else{
