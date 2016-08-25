@@ -9,8 +9,8 @@ static const float land_pos_z = 0.25;
 static const float land_pos_x = 6.0;
 static const float land_param = 8.0;
 #define MAX_ROLL_SETPOINT 0.3
-
-#define MIN_ROLL_SETPOINT 0.3
+#define EIGHT_ROLL_SETPOINT 0.35
+#define MIN_ROLL_SETPOINT 0.15
 
 
 #define LAND_THROTTLE_ZERO_POINT_X 11
@@ -56,19 +56,19 @@ AlphaState EightTurn::get_setpoint(AlphaState state){
   setpoint.pos.z = initial_state.pos.z;
   float aim_rot_z = 0;
   if(phase == 0){//first half of the eight turn
-    setpoint.rot.x = MAX_ROLL_SETPOINT;
+    setpoint.rot.x = EIGHT_ROLL_SETPOINT;
     aim_rot_z = add_angle(initial_state.rot.z,M_PI);
   }
   else if(phase == 1){
-    setpoint.rot.x = MAX_ROLL_SETPOINT;
+    setpoint.rot.x = EIGHT_ROLL_SETPOINT;
     aim_rot_z = add_angle(initial_state.rot.z,M_PI/3);
   }
   else if(phase == 2){//other side of the eight turn
-    setpoint.rot.x = -MAX_ROLL_SETPOINT;
+    setpoint.rot.x = -EIGHT_ROLL_SETPOINT;
     aim_rot_z = add_angle(initial_state.rot.z,M_PI);
   }
   else if(phase == 3){
-    setpoint.rot.x = -MAX_ROLL_SETPOINT;
+    setpoint.rot.x = -EIGHT_ROLL_SETPOINT;
     aim_rot_z = add_angle(initial_state.rot.z,-M_PI/6);
   }
   else{
