@@ -110,7 +110,7 @@ AlphaState RiseTurn::get_setpoint(AlphaState state){
  }
  else{
    pid_throttle = true;
-   setpoint.pos.z = initial_state.pos.z+5;
+   setpoint.pos.z = initial_state.pos.z+6;
  }
  
  pid_reset = false;
