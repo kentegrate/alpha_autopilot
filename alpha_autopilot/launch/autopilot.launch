@@ -21,9 +21,9 @@
 	  <param name="pitch/windup_limit" type="double" value="100.0"/>
 	  <param name="pitch/cutoff_frequency" type="double" value="25"/>
 
-	  <param name="yaw/Kp" type="double" value="-3.0"/>
-	  <param name="yaw/Ki" type="double" value="-0.3"/>
-	  <param name="yaw/Kd" type="double" value="-0.075"/>
+	  <param name="yaw/Kp" type="double" value="-4.0"/>
+	  <param name="yaw/Ki" type="double" value="-0.4"/>
+	  <param name="yaw/Kd" type="double" value="-0.1"/>
 	  <param name="yaw/upper_limit" type="double" value="2.100"/>
 	  <param name="yaw/lower_limit" type="double" value="-2.100"/>
 	  <param name="yaw/windup_limit" type="double" value="100.0"/>
