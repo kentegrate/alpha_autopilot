@@ -60,8 +60,8 @@ int main(int argc, char* argv[]){
   ros::init(argc,argv,"marker_localization_node",ros::init_options::NoSigintHandler);
   ros::NodeHandle nh;
   ros::Publisher pose_pub = nh.advertise<alpha_msgs::FilteredState>("/marker_pose",10);
-  image_transport::ImageTransport it(nh);
-  image_transport::Publisher image_pub = it.advertise("/camera/image_raw",1);
+  //  image_transport::ImageTransport it(nh);
+  //  image_transport::Publisher image_pub = it.advertise("/camera/image_raw",1);
 
 
   for(int i = 0; i < 64; i++){
@@ -94,8 +94,8 @@ int main(int argc, char* argv[]){
     std::vector<Point2f> corners;
     Mat debug_image;
     ml.getCVCorners(image,corners,debug_image);
-    sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(),"mono8",debug_image).toImageMsg();
-    image_pub.publish(image_msg);
+    //    sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(),"mono8",debug_image).toImageMsg();
+    //    image_pub.publish(image_msg);
 
     //
 
