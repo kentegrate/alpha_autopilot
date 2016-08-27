@@ -94,7 +94,7 @@ void AutoPilot::update(){
     if(automode->pid_throttle){
       pid_throttle.set_setpoint(setpoint.pos.z);
       throttle = NEUTRAL_THROTTLE + pid_throttle.update(state.pos.z)*10;
-      if(throttle > 2000)
+      if(throttle >2000)
 	throttle = 2000;
       if(throttle < trim[THROTTLE_CH])
 	throttle = trim[THROTTLE_CH];
