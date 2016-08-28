@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
   }
 
 
-  input.init(640,480,15,true);
+  input.init(640,480,10,true);
   Mat image;
   
 
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]){
     new_trans[1] =pose.pos.y;
     new_trans[2] =pose.pos.z+1.505;
 
-    if(!(new_trans[0] < 0 && new_trans[0] > -40 &&
+    if(!(new_trans[0] < -0.5 && new_trans[0] > -40 &&
 	 (fabsf(new_trans[1]) < 20) &&
 	 (fabsf(new_trans[1]) < 15))){
       if(invalid_long()){
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]){
       continue;
     }
 
-    euler_to_quaternion(&new_euler[0],&new_q[0]);
+    /*    euler_to_quaternion(&new_euler[0],&new_q[0]);
     float q_sum = 0;
     for(int i = 0; i < 4; i++){
       q[i] = (1-k_q)*q[i]+k_q*new_q[i];
@@ -147,12 +147,12 @@ int main(int argc, char* argv[]){
     for(int i = 0; i <4; i++)
       q[i]/=q_norm;
     std::vector<float> euler(3,0);
-    quaternion_to_euler(&q[0],&euler[0]);
+    quaternion_to_euler(&q[0],&euler[0]);*/
 
     alpha_msgs::FilteredState msg;
-    msg.x = trans[0];
-    msg.y = trans[1];
-    msg.z = trans[2];
+    msg.x = new_trans[0];
+    msg.y = new_trans[1];
+    msg.z = new_trans[2];
     msg.roll = new_euler[0];
     msg.pitch = new_euler[1];
     msg.yaw = new_euler[2];
